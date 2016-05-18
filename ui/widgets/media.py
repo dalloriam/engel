@@ -4,7 +4,7 @@ from abstract import ViewLink
 
 class Image(BaseElement):
 
-  def __init__(self, img_url, id=None, classname=None):
+  def __init__(self, id, img_url, classname=None):
     super(Image, self).__init__(id, classname)
     self.html_tag = "img"
 
@@ -13,17 +13,17 @@ class Image(BaseElement):
 
 class ImageLink(BaseContainer):
 
-  def __init__(self, link, img_url, id=None, classname=None):
+  def __init__(self, id, link, img_url, classname=None):
     super(ImageLink, self).__init__(id, classname)
     self.html_tag = "a"
 
     self.attributes["href"] = link
 
-    self.add_child(Image(img_url))
+    self.add_child(Image(id, img_url))
 
 
 class ViewImageLink(ViewLink):
 
-  def __init__(self, img_url, view_name, params=None, id=None, classname=None):
-    super(ViewImageLink, self).__init__(view_name, params, id, classname)
-    self.add_child(Image(img_url))
+  def __init__(self, id, img_url, view_name, params=None, classname=None):
+    super(ViewImageLink, self).__init__(id, view_name, params, classname)
+    self.add_child(Image(id, img_url))

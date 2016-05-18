@@ -1,10 +1,9 @@
 class BaseElement(object):
 
-  def __init__(self, id=None, classname=None):
+  def __init__(self, id, classname=None):
     self.styles = {}
     self.attributes = {}
-    if id:
-      self.attributes["id"] = id
+    self.attributes["id"] = id
     if classname:
       self.attributes["class"] = classname
     self.autoclosing = False
@@ -14,6 +13,9 @@ class BaseElement(object):
 
   def get_content(self):
     return self.content
+
+  def on_server_click(self, action_name):
+    self.attributes["onclick"] = "pushServerAction('{0}');".format(action_name)
 
   def _get_html_tag(self):
     return self.html_tag
@@ -33,7 +35,7 @@ class BaseElement(object):
 
 class BaseContainer(BaseElement):
 
-  def __init__(self, id=None, classname=None):
+  def __init__(self, id, classname=None):
     super(BaseContainer, self).__init__(id, classname)
     self.children = []
 
@@ -43,7 +45,7 @@ class BaseContainer(BaseElement):
   def remove_child(self, child):
     self.children.remove(child)
 
-  def get_child_by_id(self, id):
+  def get_element_by_id(self, id):
     res = filter(lambda child: child.attributes["id"] == id, self.children)
     if res:
       return res[0]

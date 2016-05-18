@@ -3,7 +3,7 @@ from base import BaseContainer, BaseElement
 
 class ViewLink(BaseContainer):
 
-  def __init__(self, view_name, params=None, id=None, classname=None):
+  def __init__(self, id, view_name, params=None, classname=None):
     super(ViewLink, self).__init__(id, classname)
     self.html_tag = "a"
 
@@ -18,7 +18,7 @@ class ViewLink(BaseContainer):
 
 class HeadLink(BaseElement):
 
-  def __init__(self, link_type, path, id=None, classname=None):
+  def __init__(self, id, link_type, path, classname=None):
     super(HeadLink, self).__init__(id, classname)
     self.attributes["href"] = path
     self.attributes["rel"] = link_type
@@ -29,7 +29,7 @@ class HeadLink(BaseElement):
 
 class PageTitle(BaseElement):
 
-  def __init__(self, text, id=None, classname=None):
+  def __init__(self, id, text, classname=None):
     super(PageTitle, self).__init__(id, classname)
     self.html_tag = "title"
 
@@ -38,8 +38,8 @@ class PageTitle(BaseElement):
 
 class Script(BaseElement):
 
-    def __init__(self, script, id=None, classname=None):
-        super(Script, self).__init__(id, classname)
-        self.html_tag = "script"
+  def __init__(self, id, js, classname=None):
+    super(Script, self).__init__(id, classname)
+    self.html_tag = "script"
 
-        self.content = script
+    self.content = js

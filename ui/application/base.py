@@ -7,10 +7,10 @@ import tornado.ioloop
 import tornado.web
 
 from ..widgets.structure import Document, Head, Body
-from ..widgets.abstract import PageTitle, HeadLink, Script
+from ..widgets.abstract import PageTitle, HeadLink
 
 
-def get_post_handler(events, render):
+def get_post_handler(get_events, render):
   class ServerActionHandler(tornado.web.RequestHandler):
 
     def get(self):
@@ -31,6 +31,7 @@ def get_post_handler(events, render):
     def post(self):
       raw = json.loads(self.request.body)
       action = raw["action"]
+      events = get_events()
       if action in events:
         events[action]()
   return ServerActionHandler
@@ -53,32 +54,25 @@ class Application(object):
 
     self.server_actions = {}
 
-    self.document = Document()
+    self.document = Document(id="doc")
 
-    self._head = Head()
-    self.page_title = PageTitle(self.base_title)
+    self._head = Head(id="head")
+    self.page_title = PageTitle(id="page-title", text=self.base_title)
 
     self._head.add_child(self.page_title)
-    self._head.add_child(HeadLink("shortcut icon", self.favicon))
-    self._head.add_child(Script("""function pushAction(s_action) {
-  var http = new XMLHttpRequest();
-  http.open('POST', 'http://localhost:8080');
-  http.addEventListener('readystatechange', function() {
-    if (http.readyState == 4 && http.status == 200) {
-      console.log('k.');
-    }
-  });
-  http.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-  http.send(JSON.stringify({action: s_action}));
-}"""))
+    self._head.add_child(HeadLink("favicon", "shortcut icon", "app-data/favicon.ico"))
 
     self.document.add_child(self._head)
     self.pages = {}
+
+  def get_server_actions(self):
+    return self.server_actions
 
   def compile(self, page_name, params=None):
     logging.info("Compiling " + str(page_name))
     if page_name in self.pages:
       page = self.pages[page_name](params)
+      self.server_actions = page.server_actions
       self.document.add_child(page.root)
       self.page_title.content = self.base_title.format(page.title)
       data = self.document.compile()
@@ -87,7 +81,7 @@ class Application(object):
 
   def run(self):
     logging.info("Starting webserver...")
-    listener = get_post_handler(self.server_actions, self.compile)
+    listener = get_post_handler(self.get_server_actions, self.compile)
     tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/.*", listener)]).listen(8080)
     ioloop = tornado.ioloop.IOLoop.instance()
     set_ping(ioloop, timedelta(seconds=2))
@@ -100,4 +94,6 @@ class View(object):
     self.name = name
     self.title = title
 
-    self.root = Body()
+    self.root = Body(id="body")
+
+    self.server_actions = {}

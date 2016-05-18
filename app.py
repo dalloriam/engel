@@ -1,6 +1,7 @@
 from ui.application.base import Application, View
 from ui.widgets.text import Title
 from ui.widgets.media import ViewImageLink, Image
+from ui.widgets.forms import Button
 
 import os
 
@@ -14,6 +15,9 @@ class MonAppConsole(object):
   def get_pictures(self):
     return ["app-data/img/" + y for y in filter(lambda filename: any([x in filename for x in ["png", "jpg", "jpeg", "gif"]]), os.listdir("app-data/img"))]
 
+  def get_random_image(self):
+    pass
+
 
 class GalleryView(View):
 
@@ -22,10 +26,13 @@ class GalleryView(View):
 
     self.pic_handler = MonAppConsole()
 
-    self.root.add_child(Title(text="Photo Gallery"))
+    self.root.add_child(Title(id="page-title", text="Photo Gallery"))
 
+    i = 1
     for img_path in self.pic_handler.get_pictures():
-      self.root.add_child(ViewImageLink(img_url=img_path, view_name="detail", params={"path": img_path}))
+      img_id = "img-" + str(i)
+      self.root.add_child(ViewImageLink(id=img_id, img_url=img_path, view_name="detail", params={"path": img_path}))
+      i += 1
 
 
 class DetailView(View):
@@ -34,8 +41,8 @@ class DetailView(View):
     super(DetailView, self).__init__(name="detail", title="Image Details")
     if params and "path" in params:
       path = params["path"]
-      self.root.add_child(Title(text=path))
-      self.root.add_child(Image(img_url=path))
+      self.root.add_child(Title(id="page-title", text=path))
+      self.root.add_child(Image(id="big-image", img_url=path))
 
 
 class PhotoGalleryApp(Application):
