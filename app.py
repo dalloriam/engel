@@ -1,68 +1,51 @@
 from ui.application.base import Application, View
-from ui.widgets.text import Title, ViewTextLink
-from ui.widgets.media import Image
-from ui.widgets.structure import List
-from ui.widgets.forms import Button
+from ui.widgets.text import Title
+from ui.widgets.media import ViewImageLink, Image
 
-import re
-import urllib2
+import os
 
 
-class HomePage(View):
+class MonAppConsole(object):
 
   def __init__(self):
-    super(HomePage, self).__init__("index", "Home")
-    self.root.add_child(Title("WASSUP"))
-    self.root.add_child(ViewTextLink("image-page", "MAH IMAGE PAGE"))
-    self.root.add_child(ViewTextLink("form", "MAH FORM PAGE"))
+    # do some shit
+    pass
+
+  def get_pictures(self):
+    return ["app-data/img/" + y for y in filter(lambda filename: any([x in filename for x in ["png", "jpg", "jpeg", "gif"]]), os.listdir("app-data/img"))]
 
 
-class ImagePage(View):
+class GalleryView(View):
 
-  def __init__(self):
-    super(ImagePage, self).__init__("image-page", "Images")
-    self.root.add_child(Title("THERE BE IMAGES"))
+  def __init__(self, params=None):
+    super(GalleryView, self).__init__(name="index", title="Home")
 
-    # Get images
-    ptrn = r"\bhttps?:\/\/\S+(?:png|jpg)\b"
-    req = urllib2.Request("http://www.mountainphotography.com/gallery/", headers={'User-Agent': "Magic Browser"})
-    raw = urllib2.urlopen(req).read()
+    self.pic_handler = MonAppConsole()
 
-    mylist = List()
-    self.root.add_child(mylist)
+    self.root.add_child(Title(text="Photo Gallery"))
 
-    for match in set(re.findall(ptrn, raw)[:10]):
-      mylist.append(Image(match))
+    for img_path in self.pic_handler.get_pictures():
+      self.root.add_child(ViewImageLink(img_url=img_path, view_name="detail", params={"path": img_path}))
 
 
-class FormPage(View):
+class DetailView(View):
 
-  def __init__(self):
-    super(FormPage, self).__init__("form", "Test Form")
-    self.root.add_child(Title("MY FORM"))
-
-    self.submit_btn = Button("Test")
-    self.root.add_child(self.submit_btn)
-
-
-class MyApp(Application):
-
-  def __init__(self):
-    super(MyApp, self).__init__("MyApp", "MyApp", "favicon.png", HomePage())
-
-    self.pages.append(ImagePage())
-
-    frm = FormPage()
-    self.pages.append(frm)
-
-    # TODO: Move server actions to view actions (dunno how)
-    frm.submit_btn.on_server_click(self.print_ok)
-    self.server_actions["print_ok"] = self.print_ok
-
-  def print_ok(self):
-    with open("yao.txt", "a") as outfile:
-      outfile.write("ok\n")
+  def __init__(self, params=None):
+    super(DetailView, self).__init__(name="detail", title="Image Details")
+    if params and "path" in params:
+      path = params["path"]
+      self.root.add_child(Title(text=path))
+      self.root.add_child(Image(img_url=path))
 
 
-app = MyApp()
+class PhotoGalleryApp(Application):
+
+  def __init__(self, debug=False):
+    super(PhotoGalleryApp, self).__init__(app_name="PhotoGallery", base_title="PhotoGallery", favicon="/appdata/favicon.ico", debug=debug)
+
+    self.pages["index"] = GalleryView
+    self.pages["detail"] = DetailView
+
+
+app = PhotoGalleryApp(debug=True)
 app.run()

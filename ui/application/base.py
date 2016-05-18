@@ -1,6 +1,7 @@
-import os
-import shutil
 import json
+import logging
+from datetime import timedelta
+
 
 import tornado.ioloop
 import tornado.web
@@ -9,8 +10,23 @@ from ..widgets.structure import Document, Head, Body
 from ..widgets.abstract import PageTitle, HeadLink, Script
 
 
-def get_post_handler(events):
+def get_post_handler(events, render):
   class ServerActionHandler(tornado.web.RequestHandler):
+
+    def get(self):
+      split_url = self.request.uri.split("?")
+      if len(split_url) == 1:
+        page = split_url[0].replace("/", "")
+        data = render(page)
+        if data:
+          self.write(data)
+      else:
+        page_string, param_string = split_url
+        page = page_string.replace("/", "")
+        params = {k[0]: k[1] for k in map(lambda x: x.split("="), param_string.split("&"))}
+        data = render(page, params)
+        if data:
+          self.write(render(page, params))
 
     def post(self):
       raw = json.loads(self.request.body)
@@ -20,12 +36,17 @@ def get_post_handler(events):
   return ServerActionHandler
 
 
+def set_ping(ioloop, timeout):
+    ioloop.add_timeout(timeout, lambda: set_ping(ioloop, timeout))
+
+
 class Application(object):
 
-  def __init__(self, app_name, base_title, favicon, root_page):
+  def __init__(self, app_name, base_title, favicon, debug=False):
     self.name = app_name
 
-    self.root_path = os.path.abspath(self.name + "/" + root_page.name + ".html")
+    loglevel = logging.DEBUG if debug else logging.WARNING
+    logging.basicConfig(format='%(asctime)s - [%(levelname)s] %(message)s', datefmt='%I:%M:%S %p', level=loglevel)
 
     self.base_title = "{0} | " + base_title
     self.favicon = favicon
@@ -38,7 +59,7 @@ class Application(object):
     self.page_title = PageTitle(self.base_title)
 
     self._head.add_child(self.page_title)
-    self._head.add_child(HeadLink("icon", self.favicon))
+    self._head.add_child(HeadLink("shortcut icon", self.favicon))
     self._head.add_child(Script("""function pushAction(s_action) {
   var http = new XMLHttpRequest();
   http.open('POST', 'http://localhost:8080');
@@ -52,46 +73,25 @@ class Application(object):
 }"""))
 
     self.document.add_child(self._head)
-    self.pages = [root_page]
+    self.pages = {}
 
-  def compile(self):
-    print("Checking for app directory...")
-    if os.path.isdir(self.name):
-      print("App directory exists. Deleting...")
-      shutil.rmtree(self.name)
-
-    print("Creating app directory...")
-    os.mkdir(self.name)
-
-    print("Copying files...")
-    shutil.copy(self.favicon, self.name)
-
-    print("Rendering pages...")
-    i = 1
-    max = len(self.pages)
-
-    for page in self.pages:
-      print("{0}/{1}".format(i, max))
+  def compile(self, page_name, params=None):
+    logging.info("Compiling " + str(page_name))
+    if page_name in self.pages:
+      page = self.pages[page_name](params)
       self.document.add_child(page.root)
       self.page_title.content = self.base_title.format(page.title)
-
-      with open(self.name + "/" + page.name + ".html", "a") as outfile:
-        outfile.write(self.document.compile())
+      data = self.document.compile()
       self.document.remove_child(page.root)
-      i += 1
-
-    print("Rendering done.")
+      return data
 
   def run(self):
-    self.compile()
-
-    print("Starting web server...")
-    listener = get_post_handler(self.server_actions)
-    tornado.web.Application([(r"/.*", listener), ]).listen(8080)
-    tornado.ioloop.IOLoop.instance().start()
-
-    print("Starting browser...")
-    os.system('start chrome "file://{0}" --kiosk'.format(self.root_path))
+    logging.info("Starting webserver...")
+    listener = get_post_handler(self.server_actions, self.compile)
+    tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/.*", listener)]).listen(8080)
+    ioloop = tornado.ioloop.IOLoop.instance()
+    set_ping(ioloop, timedelta(seconds=2))
+    ioloop.start()
 
 
 class View(object):

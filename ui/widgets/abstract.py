@@ -1,4 +1,19 @@
-from base import BaseElement
+from base import BaseContainer, BaseElement
+
+
+class ViewLink(BaseContainer):
+
+  def __init__(self, view_name, params=None, id=None, classname=None):
+    super(ViewLink, self).__init__(id, classname)
+    self.html_tag = "a"
+
+    url = view_name
+
+    query_string = "&".join([str(x) + "=" + str(params[x]) for x in params.keys()])
+    if query_string:
+      url += "?" + query_string
+
+    self.attributes["href"] = url
 
 
 class HeadLink(BaseElement):
