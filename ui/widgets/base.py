@@ -10,17 +10,22 @@ class BaseElement(object):
     self.autoclosing = False
     self.content = ""
 
+    self.html_tag = None
+
   def get_content(self):
     return self.content
 
   def _get_html_tag(self):
-    return None
+    return self.html_tag
 
   def _format_attributes(self):
     return "".join([' {0}="{1}"'.format(x, self.attributes[x])for x in self.attributes.keys()])
 
   def _generate_html(self):
-    return "<{0}{1}>{2}</{0}>".format(self._get_html_tag(), self._format_attributes(), self.content)
+    if self.autoclosing:
+      return "<{0}{1}>".format(self._get_html_tag(), self._format_attributes())
+    else:
+      return "<{0}{1}>{2}</{0}>".format(self._get_html_tag(), self._format_attributes(), self.content)
 
   def compile(self):
     return self._generate_html()
