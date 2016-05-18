@@ -1,4 +1,4 @@
-<html><head><title>Home | MyApp</title><link href="favicon.png" rel="icon"><script>function pushAction(s_action) {
+<html><head><title>Test Form | MyApp</title><link href="favicon.png" rel="icon"><script>function pushAction(s_action) {
   var http = new XMLHttpRequest();
   http.open('POST', 'http://localhost:8080');
   http.addEventListener('readystatechange', function() {
@@ -8,4 +8,4 @@
   });
   http.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
   http.send(JSON.stringify({action: s_action}));
-}</script></head><body><h1>WASSUP</h1><a href="image-page.html">MAH IMAGE PAGE</a><a href="form.html">MAH FORM PAGE</a></body></html>
+}</script></head><body><h1>MY FORM</h1><button onclick="pushAction('print_ok')">Test</button></body></html>

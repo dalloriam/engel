@@ -1,8 +1,23 @@
 import os
 import shutil
+import json
+
+import tornado.ioloop
+import tornado.web
 
 from ..widgets.structure import Document, Head, Body
-from ..widgets.abstract import PageTitle, HeadLink
+from ..widgets.abstract import PageTitle, HeadLink, Script
+
+
+def get_post_handler(events):
+  class ServerActionHandler(tornado.web.RequestHandler):
+
+    def post(self):
+      raw = json.loads(self.request.body)
+      action = raw["action"]
+      if action in events:
+        events[action]()
+  return ServerActionHandler
 
 
 class Application(object):
@@ -15,6 +30,8 @@ class Application(object):
     self.base_title = "{0} | " + base_title
     self.favicon = favicon
 
+    self.server_actions = {}
+
     self.document = Document()
 
     self._head = Head()
@@ -22,6 +39,17 @@ class Application(object):
 
     self._head.add_child(self.page_title)
     self._head.add_child(HeadLink("icon", self.favicon))
+    self._head.add_child(Script("""function pushAction(s_action) {
+  var http = new XMLHttpRequest();
+  http.open('POST', 'http://localhost:8080');
+  http.addEventListener('readystatechange', function() {
+    if (http.readyState == 4 && http.status == 200) {
+      console.log('k.');
+    }
+  });
+  http.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+  http.send(JSON.stringify({action: s_action}));
+}"""))
 
     self.document.add_child(self._head)
     self.pages = [root_page]
@@ -56,6 +84,13 @@ class Application(object):
 
   def run(self):
     self.compile()
+
+    print("Starting web server...")
+    listener = get_post_handler(self.server_actions)
+    tornado.web.Application([(r"/.*", listener), ]).listen(8080)
+    tornado.ioloop.IOLoop.instance().start()
+
+    print("Starting browser...")
     os.system('start chrome "file://{0}" --kiosk'.format(self.root_path))
 
 

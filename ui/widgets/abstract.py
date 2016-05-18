@@ -19,3 +19,12 @@ class PageTitle(BaseElement):
     self.html_tag = "title"
 
     self.content = text
+
+
+class Script(BaseElement):
+
+    def __init__(self, script, id=None, classname=None):
+        super(Script, self).__init__(id, classname)
+        self.html_tag = "script"
+
+        self.content = script
