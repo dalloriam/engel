@@ -1,5 +1,6 @@
 import json
 import logging
+import inspect
 from datetime import timedelta
 
 
@@ -7,7 +8,15 @@ import tornado.ioloop
 import tornado.web
 
 from ..widgets.structure import Document, Head, Body
-from ..widgets.abstract import PageTitle, HeadLink
+from ..widgets.abstract import PageTitle, HeadLink, Script
+
+from ..client.behavior import Javascript
+
+
+def client(func):
+  def wrapper(self, *args):
+    return "\n".join(map(str.strip, inspect.getsource(func).splitlines()[2:]))
+  return wrapper
 
 
 def get_post_handler(get_events, render):
@@ -73,6 +82,7 @@ class Application(object):
     if page_name in self.pages:
       page = self.pages[page_name](params)
       self.server_actions = page.server_actions
+      page.compile_javascript()
       self.document.add_child(page.root)
       self.page_title.content = self.base_title.format(page.title)
       data = self.document.compile()
@@ -97,3 +107,23 @@ class View(object):
     self.root = Body(id="body")
 
     self.server_actions = {}
+
+    # Todo: revamp this shit
+    self._js_root = "document.onload = function() {{ {code} }};"
+    self.script_elem = None
+    self.client_actions = []
+
+  def compile_javascript(self):
+    src = "".join([x.compile() for x in self.client_actions])
+
+    if self.script_elem in self.root.children:
+      self.root.children.remove_child(self.script_elem)
+
+    self.script_elem = Script(id="event-script", js=src)
+    self.root.add_child(self.script_elem)
+
+  def on(self, event, action=None, control=None, server_action_name=None):
+    if not control:
+      control = self.root
+    js = Javascript(control.attributes["id"], event, action, server_action_name=server_action_name)
+    self.client_actions.append(js)

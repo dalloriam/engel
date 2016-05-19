@@ -1,4 +1,5 @@
-from ui.application.base import Application, View
+from ui.application.base import Application, View, client
+
 from ui.widgets.text import Title
 from ui.widgets.media import ViewImageLink, Image
 from ui.widgets.forms import Button
@@ -43,6 +44,16 @@ class DetailView(View):
       path = params["path"]
       self.root.add_child(Title(id="page-title", text=path))
       self.root.add_child(Image(id="big-image", img_url=path))
+
+      btn = Button(id="btnSmaller", text="Make Smaller")
+      self.root.add_child(btn)
+
+      self.on(event="click", control=btn, action=self.client_Manipulate)
+
+  @client
+  def client_Manipulate(self, document, console, alert):
+    my_img = document.getElementsByTagName("img")[0]
+    my_img.style.height = "20%"
 
 
 class PhotoGalleryApp(Application):
