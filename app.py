@@ -51,9 +51,10 @@ class DetailView(View):
       self.on(event="click", control=btn, action=self.client_Manipulate)
 
   @client
-  def client_Manipulate(self, document, console, alert):
-    my_img = document.getElementsByTagName("img")[0]
-    my_img.style.height = "20%"
+  def client_Manipulate(self, document, alert):
+    if 1 == 1:
+      my_img = document.getElementsByTagName("img")[0]
+      my_img.style.width = "80%"
 
 
 class PhotoGalleryApp(Application):

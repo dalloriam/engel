@@ -1,6 +1,3 @@
-from ..client.behavior import Javascript
-
-
 class BaseElement(object):
 
   def __init__(self, id, classname=None):

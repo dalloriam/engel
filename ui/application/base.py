@@ -15,7 +15,16 @@ from ..client.behavior import Javascript
 
 def client(func):
   def wrapper(self, *args):
-    return "\n".join(map(str.strip, inspect.getsource(func).splitlines()[2:]))
+    lines = inspect.getsource(func).splitlines()[2:]
+    i = 0
+    for char in lines[0]:
+      if char == " ":
+        i += 1
+      else:
+        break
+
+    text = "\n".join(map(lambda x: ''.join(list(x)[i:]), lines))
+    return text
   return wrapper
 
 

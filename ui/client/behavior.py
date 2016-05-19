@@ -16,5 +16,4 @@ class Javascript(object):
     return self.base.format(id=self.elem_id, event=self.client_event)
 
   def compile(self):
-    print self.client_action()
     return self._generate_event_handler() + "{code} }});".format(code=compiler.to_javascript(self.client_action()))
