@@ -24,7 +24,7 @@ class Paragraph(BaseElement):
 class Span(BaseElement):
 
   def __init__(self, id, text, classname=None):
-    super(Span, self).__init(id, classname)
+    super(Span, self).__init__(id, classname)
     self.content = text
     self.html_tag = "span"
 
@@ -42,5 +42,5 @@ class TextLink(BaseElement):
 class ViewTextLink(ViewLink):
 
   def __init__(self, id, text, view_name, params=None, classname=None):
-    super(ViewTextLink, self).__init__(view_name, params, id, classname)
-    self.add_child(Span(text=text))
+    super(ViewTextLink, self).__init__(id=id, view_name=view_name, params=params, classname=classname)
+    self.add_child(Span(id=id+"-span", text=text))

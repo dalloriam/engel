@@ -1,6 +1,6 @@
 from ui.application.base import Application, View, client
 
-from ui.widgets.text import Title
+from ui.widgets.text import Title, ViewTextLink
 from ui.widgets.media import ViewImageLink, Image, Audio
 from ui.widgets.forms import Button
 from ui.widgets.structure import Panel
@@ -8,6 +8,7 @@ from ui.widgets.structure import Panel
 from ui.widgets.abstract import HeadLink
 
 import os
+import random
 
 
 class MonAppConsole(object):
@@ -20,7 +21,7 @@ class MonAppConsole(object):
     return ["app-data/img/" + y for y in filter(lambda filename: any([x in filename for x in ["png", "jpg", "jpeg", "gif"]]), os.listdir("app-data/img"))]
 
   def get_random_image(self):
-    pass
+    return random.choice(self.get_pictures())
 
 
 class GalleryView(View):
@@ -32,6 +33,7 @@ class GalleryView(View):
 
     main_panel = Panel(id="main-panel", classname="content")
     main_panel.add_child(Title(id="page-title", text="Photo Gallery"))
+    main_panel.add_child(ViewTextLink(id="random-page", text="Get Random Picture", view_name="detail"))
     self.root.add_child(main_panel)
 
     i = 1
@@ -47,8 +49,13 @@ class DetailView(View):
 
   def __init__(self, params=None):
     super(DetailView, self).__init__(name="detail", title="Image Details")
+    path = None
     if params and "path" in params:
       path = params["path"]
+    else:
+      path = MonAppConsole().get_random_image()
+
+    if path:
       main_panel = Panel(id="main-panel", classname="content")
       self.root.add_child(main_panel)
       main_panel.add_child(Title(id="page-title", text=path))

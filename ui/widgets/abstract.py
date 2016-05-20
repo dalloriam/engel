@@ -8,10 +8,10 @@ class ViewLink(BaseContainer):
     self.html_tag = "a"
 
     url = view_name
-
-    query_string = "&".join([str(x) + "=" + str(params[x]) for x in params.keys()])
-    if query_string:
-      url += "?" + query_string
+    if params:
+      query_string = "&".join([str(x) + "=" + str(params[x]) for x in params.keys()])
+      if query_string:
+        url += "?" + query_string
 
     self.attributes["href"] = url
 
