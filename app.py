@@ -74,7 +74,7 @@ class PhotoGalleryApp(Application):
 
   def __init__(self, debug=False):
     super(PhotoGalleryApp, self).__init__(app_name="PhotoGallery", base_title="PhotoGallery", favicon="app-data/favicon.ico", debug=debug)
-    self._head.add_child(HeadLink("style", "stylesheet", "stylesheet.css"))
+    self._head.add_child(HeadLink("style", "stylesheet", "app-data/stylesheet.css"))
     self._head.add_child(HeadLink("style", "stylesheet", "https://fonts.googleapis.com/css?family=Tangerine"))
 
     self.pages["index"] = GalleryView
