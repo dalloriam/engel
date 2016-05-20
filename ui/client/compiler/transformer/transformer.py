@@ -9,17 +9,12 @@ class TreeTransformer(ast.NodeTransformer):
     as javascript does not support the form x not in y
     """
 
-    # TODO: in javascript "in" only works for int arrays for some reason.
-    # optimize this so it either converts all "in" calls to iterable.indexOf([val]) !=-1
-    # OR (better) so it converts only non-int iterables to iterable.indexOf([val]) != -1
+    # Broken atm. Gotta move "x in y" to "y.indexOf(x) != -1" and "x not in y" to "y.indexOf(x) == -1"
     for op in node.ops:
-      if isinstance(op, ast.NotIn):
-        return ast.copy_location(ast.UnaryOp(
-            op=ast.Not(),
-            operand=ast.Compare(
-                left=node.left,
-                ops=[ast.In()],
-                comparators=node.comparators
-            )
+      if isinstance(op, ast.In):
+        return ast.copy_location(ast.Compare(
+            left=ast.Num(n=-1),
+            ops=[ast.Eq()],
+            comparators=[]
         ), node)
     return node

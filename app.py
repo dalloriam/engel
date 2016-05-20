@@ -52,7 +52,9 @@ class DetailView(View):
 
   @client
   def client_Manipulate(self, document, console):
-    if "x" not in "yao":
+    console.log("hello, world")
+    if True:
+      console.log("fuck you sir")
       my_img = document.getElementsByTagName("img")[0]
       my_img.style.width = "80%"
 

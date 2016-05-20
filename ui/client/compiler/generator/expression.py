@@ -29,6 +29,9 @@ def expression(node):
   elif isinstance(node, ast.UnaryOp):
     return "{0}({1})".format(unary_operation(node.op), expression(node.operand))
 
+  elif isinstance(node, ast.List):
+    return "[{0}]".format(",".join(map(expression, node.elts)))
+
   else:
     return base_types(node)
 
