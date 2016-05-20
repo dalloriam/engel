@@ -117,7 +117,12 @@ class View(object):
 
     self.server_actions = {}
 
-    # Todo: revamp this shit
+    # Todo: revamp this shit when compiler supports function definitions.
+    # call the compiler on the whole view, modify the transformer (or create a new component)
+    # so it removes all non-client function definitions from the AST. Then, have the code generator go through
+    # the AST and generate one js function for each python client function, and have it generate
+    # the global (document.onload) event listener as well as the sub-document listeners.
+    # When this is done, the javascript generator will officially be written in pure python.
     self._js_root = "document.onload = function() {{ {code} }};"
     self.script_elem = None
     self.client_actions = []

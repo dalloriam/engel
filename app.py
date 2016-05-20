@@ -51,8 +51,8 @@ class DetailView(View):
       self.on(event="click", control=btn, action=self.client_Manipulate)
 
   @client
-  def client_Manipulate(self, document, alert):
-    if 1 == 1:
+  def client_Manipulate(self, document, console):
+    if "x" not in "yao":
       my_img = document.getElementsByTagName("img")[0]
       my_img.style.width = "80%"
 

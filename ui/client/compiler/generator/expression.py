@@ -26,6 +26,9 @@ def expression(node):
     # TODO: Handle keywords (maybe)
     return "{0}({1})".format(expression(node.func), ','.join(map(expression, node.args)))
 
+  elif isinstance(node, ast.UnaryOp):
+    return "{0}({1})".format(unary_operation(node.op), expression(node.operand))
+
   else:
     return base_types(node)
 
@@ -45,11 +48,19 @@ def base_types(node):
     return str(node.n)
 
   elif isinstance(node, ast.Name):
-    # TODO: Add tree transformer to remove logic from code generator
-    if context(node.ctx) == "store":
-      return "var {0}".format(node.id)
-    else:
-      return node.id
+    # Handle Booleans TODO: Maybe check to add new node type in transform? Or Maybe True = 1 && False = 0?
+    out = node.id
+    if node.id == "True":
+      out = "true"
+    elif node.id == "False":
+      out = "false"
+    return "{1}{0}".format(out, context(node.ctx))
+
+
+def unary_operation(node):
+
+  if isinstance(node, ast.Not):
+    return "!"
 
 
 def comparison_operator(node):
@@ -81,18 +92,11 @@ def comparison_operator(node):
   elif isinstance(node, ast.In):
     return "in"
 
-  elif isinstance(node, ast.NotIn):
-    # TODO: Tree Transformation: [val] not in [iterable] => !([val] in [iterable])
-    return None
-
 
 def context(node):
 
   if isinstance(node, ast.Load):
-    return "load"
+    return ""
 
   elif isinstance(node, ast.Store):
-    return "store"
-
-  elif isinstance(node, ast.Del):
-    return "del"
+    return "var "
