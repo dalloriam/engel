@@ -22,8 +22,16 @@ class ImageLink(BaseContainer):
     self.add_child(Image(id, img_url))
 
 
+class Audio(BaseElement):
+
+  def __init__(self, id, audio_path, classname=None):
+    super(Audio, self).__init__(id, classname)
+    self.attributes["src"] = audio_path
+    self.html_tag = "audio"
+
+
 class ViewImageLink(ViewLink):
 
   def __init__(self, id, img_url, view_name, params=None, classname=None):
-    super(ViewImageLink, self).__init__(id, view_name, params, classname)
-    self.add_child(Image(id, img_url))
+    super(ViewImageLink, self).__init__(view_name, view_name, params)
+    self.add_child(Image(id, img_url, classname=classname))

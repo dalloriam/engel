@@ -123,12 +123,12 @@ class View(object):
     # the AST and generate one js function for each python client function, and have it generate
     # the global (document.onload) event listener as well as the sub-document listeners.
     # When this is done, the javascript generator will officially be written in pure python.
-    self._js_root = "document.onload = function() {{ {code} }};"
+    self._js_root = "window.onload = function() {{ {code} }};"
     self.script_elem = None
     self.client_actions = []
 
   def compile_javascript(self):
-    src = "".join([x.compile() for x in self.client_actions])
+    src = self._js_root.format(code="".join([x.compile() for x in self.client_actions]))
 
     if self.script_elem in self.root.children:
       self.root.children.remove_child(self.script_elem)
