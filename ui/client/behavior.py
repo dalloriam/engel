@@ -1,4 +1,4 @@
-from compiler import compiler
+from ui.client.compiler import compiler
 
 
 class Javascript(object):

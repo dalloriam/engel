@@ -1,6 +1,6 @@
 import ast
 
-from expression import expression
+from .expression import expression
 
 
 def statement(node):

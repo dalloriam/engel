@@ -1,5 +1,5 @@
-from base import BaseElement
-from abstract import ViewLink
+from .base import BaseElement
+from .abstract import ViewLink
 
 
 class Title(BaseElement):

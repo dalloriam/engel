@@ -1,5 +1,5 @@
-from base import BaseElement, BaseContainer
-from abstract import ViewLink
+from .base import BaseElement, BaseContainer
+from .abstract import ViewLink
 
 
 class Image(BaseElement):

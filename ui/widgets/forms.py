@@ -1,4 +1,4 @@
-from base import BaseElement
+from .base import BaseElement
 
 
 class Button(BaseElement):

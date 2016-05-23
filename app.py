@@ -65,9 +65,10 @@ class DetailView(View):
       self.on(event="click", control=btn, action=self.client_PlaySound)
 
   @client
-  def client_PlaySound(self, document, console):
+  def client_PlaySound(self, document, console, alert):
     audioElem = document.getElementsByTagName("audio")[0]
     audioElem.play()
+    alert("Hello")
 
 
 class PhotoGalleryApp(Application):

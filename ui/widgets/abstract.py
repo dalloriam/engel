@@ -1,4 +1,4 @@
-from base import BaseContainer, BaseElement
+from ui.widgets.base import BaseContainer, BaseElement
 
 
 class ViewLink(BaseContainer):

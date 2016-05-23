@@ -1,4 +1,4 @@
-from base import BaseContainer
+from ui.widgets.base import BaseContainer
 
 
 class Document(BaseContainer):
