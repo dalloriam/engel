@@ -1,6 +1,6 @@
 import ast
-from ui.client.compiler.generator import generate
-from ui.client.compiler.transformer.transformer import TreeTransformer
+from .generator import generate
+from .transformer.transformer import TreeTransformer
 
 
 def to_javascript(code):

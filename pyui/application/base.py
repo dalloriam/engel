@@ -7,6 +7,8 @@ from datetime import timedelta
 import tornado.ioloop
 import tornado.web
 
+import threading
+
 from ..widgets.structure import Document, Head, Body
 from ..widgets.abstract import PageTitle, HeadLink, Script
 
@@ -56,7 +58,7 @@ def get_post_handler(get_events, render):
 
 
 def set_ping(ioloop, timeout):
-    ioloop.add_timeout(timeout, lambda: set_ping(ioloop, timeout))
+  ioloop.add_timeout(timeout, lambda: set_ping(ioloop, timeout))
 
 
 class Application(object):
@@ -102,9 +104,10 @@ class Application(object):
     logging.info("Starting webserver...")
     listener = get_post_handler(self.get_server_actions, self.compile)
     tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/.*", listener)]).listen(8080)
-    ioloop = tornado.ioloop.IOLoop.instance()
+    ioloop = tornado.ioloop.IOLoop.current()
     set_ping(ioloop, timedelta(seconds=2))
-    ioloop.start()
+    t = threading.Thread(target=ioloop.start)
+    t.start()
 
 
 class View(object):
