@@ -9,6 +9,7 @@ class TreeTransformer(ast.NodeTransformer):
     as javascript does not support the form "[x] in [y]"
     """
 
+    # BROKEN AGAIN, FIX PLEASE
     # TODO: fix this HACK: doesn't work if more thant one op or more than one comparator
     for op in node.ops:
       # TODO: Optimize this node transform

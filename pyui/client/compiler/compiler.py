@@ -19,3 +19,7 @@ def to_javascript(code):
   print(out)
 
   return out
+
+
+def generate_event_handler(event_name, elem_id, func_name):
+  return 'document.getElementById("{0}").addEventListener("{1}", {2});'.format(elem_id, event_name, func_name)
