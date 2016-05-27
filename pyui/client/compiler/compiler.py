@@ -4,10 +4,14 @@ from .transformer.transformer import TreeTransformer
 
 
 def to_javascript(code):
-  print(code)
+  # print(code)
+  # print("")
+  raw_tree = ast.parse(code)
+  print(ast.dump(raw_tree))
+  tree = TreeTransformer().visit(raw_tree)
   print("")
-  tree = TreeTransformer().visit(ast.parse(code))
-  # print ast.dump(tree)
+  print("")
+  print(ast.dump(tree))
   out = generate(tree)
   print(out)
   return out

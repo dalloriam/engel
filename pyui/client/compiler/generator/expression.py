@@ -64,6 +64,8 @@ def unary_operation(node):
 
   if isinstance(node, ast.Not):
     return "!"
+  elif isinstance(node, ast.USub):
+    return "-"
 
 
 def comparison_operator(node):
@@ -91,9 +93,6 @@ def comparison_operator(node):
 
   elif isinstance(node, ast.IsNot):
     return "!=="
-
-  elif isinstance(node, ast.In):
-    return "in"
 
 
 def context(node):
