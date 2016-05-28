@@ -6,6 +6,7 @@ from pyui.application.base import client
 
 
 def test_strings():
+  assert to_javascript('""') == '"";'
   assert to_javascript('"hello"') == '"hello";'
 
 
@@ -84,13 +85,16 @@ def MyFunction3(a, b):
   y = a * b
 
 
-# TODO: Testcase with methods that returns
+@client
+def MyFunction4(a, b):
+  return a + b
 
 
 def test_function_define():
   assert to_javascript(MyFunction1()) == "function MyFunction1(){ var y = 1 + 1;var x = 2 + 1; }"
   assert to_javascript(MyFunction2()) == "function MyFunction2(a){ var y = a * 2; }"
   assert to_javascript(MyFunction3()) == "function MyFunction3(a,b){ var y = a * b; }"
+  assert to_javascript(MyFunction4()) == "function MyFunction4(a,b){ return a + b; }"
 
 
 def test_value_in_array():

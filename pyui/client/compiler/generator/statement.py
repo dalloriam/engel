@@ -23,6 +23,9 @@ def statement(node):
   if isinstance(node, ast.FunctionDef):
     return "function {0}({2}){{ {1} }}".format(node.name, "".join(map(statement, node.body)), arguments(node.args))
 
+  if isinstance(node, ast.Return):
+    return "return {0};".format(expression(node.value))
+
   # If all fails, check expression tree
   elif isinstance(node, ast.Expr):
     print(node.value)
