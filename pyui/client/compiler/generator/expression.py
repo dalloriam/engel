@@ -32,6 +32,15 @@ def expression(node):
   elif isinstance(node, ast.List):
     return "[{0}]".format(",".join(map(expression, node.elts)))
 
+  elif isinstance(node, ast.BinOp):
+    left = expression(node.left) if isinstance(node.left, ast.Num) or isinstance(node.left, ast.Name) else "({0})".format(expression(node.left))
+    right = expression(node.right) if isinstance(node.right, ast.Num) or isinstance(node.right, ast.Name) else "({0})".format(expression(node.right))
+
+    return "{0} {1} {2}".format(left, operator(node.op), right)
+
+  elif isinstance(node, ast.NameConstant):
+    return node.value
+
   else:
     return base_types(node)
 
@@ -53,10 +62,6 @@ def base_types(node):
   elif isinstance(node, ast.Name):
     # Handle Booleans TODO: Maybe check to add new node type in transform? Or Maybe True = 1 && False = 0?
     out = node.id
-    if node.id == "True":
-      out = "true"
-    elif node.id == "False":
-      out = "false"
     return "{1}{0}".format(out, context(node.ctx))
 
 
@@ -66,6 +71,24 @@ def unary_operation(node):
     return "!"
   elif isinstance(node, ast.USub):
     return "-"
+
+
+def operator(node):
+
+  if isinstance(node, ast.Add):
+    return "+"
+
+  elif isinstance(node, ast.Sub):
+    return "-"
+
+  elif isinstance(node, ast.Mult):
+    return "*"
+
+  elif isinstance(node, ast.Div):
+    return "/"
+
+  elif isinstance(node, ast.Mod):
+    return "%"
 
 
 def comparison_operator(node):

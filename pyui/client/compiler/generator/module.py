@@ -11,5 +11,4 @@ def module(node):
 
     elif isinstance(child, ast.stmt):
       body += statement(child)
-    body += "\n"
   return body

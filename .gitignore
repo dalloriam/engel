@@ -4,3 +4,5 @@ venv/*
 app-data/*
 app.py
 .DS_Store
+.cache/*
+*/.cache/*

@@ -18,13 +18,14 @@ def statement(node):
     return out
 
   if isinstance(node, ast.Assign):
-    return '\n'.join(map(lambda target: "{0} = {1};".format(expression(target), expression(node.value)), node.targets))
+    return ''.join(map(lambda target: "{0} = {1};".format(expression(target), expression(node.value)), node.targets))
 
   if isinstance(node, ast.FunctionDef):
-    return "function {0}({2}){{ {1} }}".format(node.name, "\n".join(map(statement, node.body)), arguments(node.args))
+    return "function {0}({2}){{ {1} }}".format(node.name, "".join(map(statement, node.body)), arguments(node.args))
 
   # If all fails, check expression tree
   elif isinstance(node, ast.Expr):
+    print(node.value)
     return expression(node.value) + ";"
 
 
