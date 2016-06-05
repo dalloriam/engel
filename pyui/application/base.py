@@ -62,6 +62,21 @@ def set_ping(ioloop, timeout):
   ioloop.add_timeout(timeout, lambda: set_ping(ioloop, timeout))
 
 
+class WebSocketListener(tornado.websocket.WebSocketHandler):
+
+  def _configure(self, parse_fn):
+    self.parse = parse_fn
+
+  def open(self):
+    print("WebSocket Opened.")
+
+  def on_message(self, message):
+    pass
+
+  def close(self):
+    print("WebSocket Closed.")
+
+
 class Application(object):
 
   def __init__(self, app_name, base_title, favicon, debug=False):
@@ -121,14 +136,23 @@ class Application(object):
       self._head.remove_child(sc_elem)
       return data
 
+  def update_element(self, element):
+    pass
+
   def run(self):
     logging.info("Starting webserver...")
     listener = get_post_handler(self.get_server_actions, self.compile)
-    tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/.*", listener)]).listen(8080)
+
+    self.web_socket_listener = WebSocketListener()
+    self.web_socket_listener.configure(self.update_element)
+
+    tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/websocket", self.web_socket_listener), (r"/.*", listener)]).listen(8080)
     ioloop = tornado.ioloop.IOLoop.current()
     set_ping(ioloop, timedelta(seconds=2))
-    t = threading.Thread(target=ioloop.start)
-    t.start()
+    ioloop.start()
+    # TODO: Figure out threading model
+    # t = threading.Thread(target=ioloop.start)
+    # t.start()
 
 
 class View(object):
