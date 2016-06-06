@@ -6,6 +6,7 @@ from datetime import timedelta
 
 import tornado.ioloop
 import tornado.web
+import tornado.websocket
 
 import threading
 
@@ -62,19 +63,19 @@ def set_ping(ioloop, timeout):
   ioloop.add_timeout(timeout, lambda: set_ping(ioloop, timeout))
 
 
-class WebSocketListener(tornado.websocket.WebSocketHandler):
+def get_socket_listener(application):
+  class WebSocketListener(tornado.websocket.WebSocketHandler):
 
-  def _configure(self, parse_fn):
-    self.parse = parse_fn
+    def open(self):
+      print("WebSocket Opened.")
 
-  def open(self):
-    print("WebSocket Opened.")
+    def on_message(self, message):
+      pass
 
-  def on_message(self, message):
-    pass
+    def close(self):
+      print("WebSocket Closed.")
 
-  def close(self):
-    print("WebSocket Closed.")
+  return WebSocketListener
 
 
 class Application(object):
@@ -143,10 +144,7 @@ class Application(object):
     logging.info("Starting webserver...")
     listener = get_post_handler(self.get_server_actions, self.compile)
 
-    self.web_socket_listener = WebSocketListener()
-    self.web_socket_listener.configure(self.update_element)
-
-    tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/websocket", self.web_socket_listener), (r"/.*", listener)]).listen(8080)
+    tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/websocket", get_socket_listener(self)), (r"/.*", listener)]).listen(8080)
     ioloop = tornado.ioloop.IOLoop.current()
     set_ping(ioloop, timedelta(seconds=2))
     ioloop.start()
