@@ -37,6 +37,7 @@ class BaseContainer(BaseElement):
     self.children = []
 
   def add_child(self, child):
+    # TODO: ADD "PARENT" parameter in widget constructors
     self.children.append(child)
 
   def remove_child(self, child):
