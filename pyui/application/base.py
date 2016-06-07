@@ -101,7 +101,9 @@ class Application(object):
     self._head.add_child(HeadLink("favicon", "shortcut icon", "app-data/favicon.ico"))
 
     self.document.add_child(self._head)
-    self.pages = {}
+
+    self.views = {}
+    self.services = {}
 
   def get_server_actions(self):
     return self.server_actions
@@ -111,9 +113,15 @@ class Application(object):
 
   def compile(self, page_name, params=None):
     logging.info("Compiling " + str(page_name))
-    if page_name in self.pages:
-      page = self.pages[page_name](params)
+    if page_name in self.views:
+
+      # Initializes the view
+      page = self.views[page_name]()
+      page.ctx = self
+      page.run(params)
       self.server_actions = page.server_actions
+
+      # Renders the page
       self.document.add_child(page.root)
       raw_js = ""
       for action in self.get_client_actions(page):
@@ -123,16 +131,13 @@ class Application(object):
 
       sc_elem = Script("main-script", raw_js)
       self._head.add_child(sc_elem)
-
-      print(self.get_client_actions(page))
       self.page_title.content = self.base_title.format(page.title)
       data = self.document.compile()
-      self.document.remove_child(page.root)
-      self._head.remove_child(sc_elem)
-      return data
 
-  def update_element(self, element):
-    pass
+      # Unload the page from canvas for re-rendering
+      self._head.remove_child(sc_elem)
+      self.document.remove_child(page.root)
+      return data
 
   def run(self):
     logging.info("Starting webserver...")
@@ -141,10 +146,10 @@ class Application(object):
     tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/websocket", get_socket_listener(self)), (r"/.*", listener)]).listen(8080)
     ioloop = tornado.ioloop.IOLoop.current()
     set_ping(ioloop, timedelta(seconds=2))
-    ioloop.start()
+    # ioloop.start()
     # TODO: Figure out threading model
-    # t = threading.Thread(target=ioloop.start)
-    # t.start()
+    t = threading.Thread(target=ioloop.start)
+    t.start()
 
 
 class View(object):
