@@ -1,4 +1,5 @@
 *.pyc
+*.sublime-project
 *.log
 venv/*
 app-data/*

@@ -1,11 +1,16 @@
 class BaseElement(object):
 
-  def __init__(self, id, classname=None):
+  def __init__(self, id, classname=None, parent=None):
     self.styles = {}
     self.attributes = {}
     self.attributes["id"] = id
+
     if classname:
       self.attributes["class"] = classname
+
+    if parent is not None:
+      parent.add_child(self)
+
     self.autoclosing = False
     self.content = ""
 
@@ -32,12 +37,11 @@ class BaseElement(object):
 
 class BaseContainer(BaseElement):
 
-  def __init__(self, id, classname=None):
-    super(BaseContainer, self).__init__(id, classname)
+  def __init__(self, id, classname=None, parent=None):
+    super(BaseContainer, self).__init__(id, classname, parent)
     self.children = []
 
   def add_child(self, child):
-    # TODO: ADD "PARENT" parameter in widget constructors
     self.children.append(child)
 
   def remove_child(self, child):
