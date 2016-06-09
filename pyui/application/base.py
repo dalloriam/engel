@@ -80,14 +80,16 @@ def get_socket_listener(application):
 
 class Application(object):
 
-  def __init__(self, app_name, base_title, favicon, debug=False):
-    self.name = app_name
+  def __init__(self, debug=False):
+
+    # TODO: Throw exception when these are not set before run
+    self.name = None
+    self.base_title = None
+    self.favicon = None
 
     loglevel = logging.DEBUG if debug else logging.WARNING
     logging.basicConfig(format='%(asctime)s - [%(levelname)s] %(message)s', datefmt='%I:%M:%S %p', level=loglevel)
 
-    self.base_title = "{0} | " + base_title
-    self.favicon = favicon
 
     self._js_root = "window.onload = function() {{ {code} }};"
     self.server_actions = {}
@@ -95,10 +97,11 @@ class Application(object):
     self.document = Document(id="doc")
 
     self._head = Head(id="head")
-    self.page_title = PageTitle(id="page-title", text=self.base_title)
+    self.page_title = PageTitle(id="page-title", text="")
 
     self._head.add_child(self.page_title)
-    self._head.add_child(HeadLink("favicon", "shortcut icon", "app-data/favicon.ico"))
+    # TODO: Fix the favicon handling. Maybe render in compile() or run()?
+    # self._head.add_child(HeadLink("favicon", "shortcut icon", "app-data/favicon.ico"))
 
     self.document.add_child(self._head)
 
@@ -140,9 +143,13 @@ class Application(object):
       return data
 
   def run(self):
+
+    logging.info("Initializing services...")
+    for svc in self.services:
+      self.services[svc] = self.services[svc]()
+
     logging.info("Starting webserver...")
     listener = get_post_handler(self.get_server_actions, self.compile)
-
     tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/websocket", get_socket_listener(self)), (r"/.*", listener)]).listen(8080)
     ioloop = tornado.ioloop.IOLoop.current()
     set_ping(ioloop, timedelta(seconds=2))
@@ -154,9 +161,10 @@ class Application(object):
 
 class View(object):
 
-  def __init__(self, name, title):
-    self.name = name
-    self.title = title
+  def __init__(self):
+    # TODO: Throw exceptions when name & title not set before run
+    self.name = None
+    self.title = None
 
     self.root = Body(id="body")
 
