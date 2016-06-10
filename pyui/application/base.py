@@ -80,12 +80,11 @@ def get_socket_listener(application):
 
 class Application(object):
 
-  def __init__(self, debug=False):
+  name = None
+  base_title = None
+  favicon = None
 
-    # TODO: Throw exception when these are not set before run
-    self.name = None
-    self.base_title = None
-    self.favicon = None
+  def __init__(self, debug=False):
 
     loglevel = logging.DEBUG if debug else logging.WARNING
     logging.basicConfig(format='%(asctime)s - [%(levelname)s] %(message)s', datefmt='%I:%M:%S %p', level=loglevel)
@@ -133,11 +132,16 @@ class Application(object):
       raw_js += self._js_root.format(code=page.render_events())
 
       sc_elem = Script("main-script", raw_js)
+      style = None
+      if page.stylesheet:
+        style = HeadLink(id="stylesheet", link_type="stylesheet", path="app-data/" + page.stylesheet, parent=self._head)
       self._head.add_child(sc_elem)
       self.page_title.content = self.base_title.format(page.title)
       data = self.document.compile()
 
       # Unload the page from canvas for re-rendering
+      if style:
+        self._head.remove_child(style)
       self._head.remove_child(sc_elem)
       self.document.remove_child(page.root)
       return data
@@ -161,10 +165,13 @@ class Application(object):
 
 class View(object):
 
+  # TODO: Throw exceptions when name & title not set before run
+  name = None
+  title = None
+
+  stylesheet = None
+
   def __init__(self):
-    # TODO: Throw exceptions when name & title not set before run
-    self.name = None
-    self.title = None
 
     self.root = Body(id="body")
 
