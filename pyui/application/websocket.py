@@ -1,3 +1,4 @@
+import json
 import tornado.websocket
 
 
@@ -8,9 +9,16 @@ def get_socket_listener(application):
       print("WebSocket Opened.")
 
     def on_message(self, message):
-      # message = {control_id: "123", event: "123", data: {[...]}}
       # Simply pass event to application
-      pass
+      msg = json.loads(message)
+      event = msg["event"]
+      elem = msg["element_id"]
+      data = msg["data"] if "data" in msg else None
+
+      if data:
+        application.current_view.socket_events[event][elem](data)
+      else:
+        application.current_view.socket_events[event][elem]()
 
     def send_message(self, message):
       # Send update message to control

@@ -15,7 +15,7 @@ import threading
 from ..widgets.structure import Document, Head, Body
 from ..widgets.abstract import PageTitle, HeadLink, Script
 
-from ..client.compiler.compiler import to_javascript, generate_event_handler
+from ..client.compiler.compiler import to_javascript, generate_event_handler, generate_websocket_handler
 
 
 def client(func):
@@ -104,35 +104,6 @@ class Application(object):
       html = self.current_view.render(root=self.document)
       return html
 
-      # # Initializes the view
-      # page = self.views[page_name]()
-      # page.ctx = self
-      # page.run(params)
-      # self.server_events = page.server_events
-
-      # # Renders the page
-      # self.document.add_child(page.root)
-      # raw_js = ""
-      # for action in self.get_client_actions(page):
-        # src = action()
-        # raw_js += to_javascript(src)
-      # raw_js += self._js_root.format(code=page.render_events())
-
-      # sc_elem = Script("main-script", raw_js)
-      # style = None
-      # if page.stylesheet:
-        # style = HeadLink(id="stylesheet", link_type="stylesheet", path="app-data/" + page.stylesheet, parent=self._head)
-      # self._head.add_child(sc_elem)
-      # self.page_title.content = self.base_title.format(page.title)
-      # data = self.document.compile()
-
-      # # Unload the page from canvas for re-rendering
-      # if style:
-        # self._head.remove_child(style)
-      # self._head.remove_child(sc_elem)
-      # self.document.remove_child(page.root)
-      # return data
-
   def run(self):
 
     logging.info("Initializing services...")
@@ -163,12 +134,14 @@ class View(object):
 
     self.root = Body(id="body")
     self._js_event_root = "window.onload = function() {{ {code} }};"
-    self._server_event_root = ""
+    self._server_event_root = 'ws = new WebSocket("ws://localhost:8080/websocket");ws.onopen = function() {{ {code} }};'
 
     self.ctx = ctx
 
     self.server_events = []
     self.evt_handlers = []
+
+    self.socket_events = {}
 
   def render(self, root):
     # This allows the view to have access to the application's services
@@ -178,25 +151,22 @@ class View(object):
         "events": "",
         "server_events": ""
     }
+    root.add_child(self.root)
+
+    root.update_events()
+    self.server_events += root.server_events
+    self.evt_handlers += root.event_handlers
+    self.socket_events.update(root.socket_events)
 
     # Compiling methods defined with @client
     for client_action in [getattr(self, x) for x in dir(self) if hasattr(getattr(self, x), "clientside")]:
       action_source = client_action()
       javascript["top_level"] += to_javascript(action_source)
 
-    # Compiling event handlers
-    for evt in self.evt_handlers:
-      javascript["events"] += generate_event_handler(evt["event"], evt["id"], evt["action"])
-
-    # Compiling server events
-    for evt in self.server_events:
-      javascript["server_events"] += generate
-
-    final_js = "".join(javascript["top_level"]) + self._js_event_root.format(code=javascript["events"])
+    final_js = "".join(javascript["top_level"]) + self._js_event_root.format(code=javascript["events"] + self._server_event_root.format(code="".join(self.server_events)))
     script = Script(id="main-script", js=final_js)
 
     root.add_child(script)
-    root.add_child(self.root)
 
     out = root.compile()
 
@@ -210,9 +180,20 @@ class View(object):
     if not control:
       control = self.root
 
+    control_id = control.attributes["id"]
+
+    # TODO: Validate combinations of action & server_action (action must be client, server must be server, etc.)
+    # TODO: Remove possibility for duplicate server_events
     if hasattr(action, "clientside"):
       # Is client event handler, generate client Javascript
-      self.evt_handlers.append({"action": action.__name__, "event": event, "id": control.attributes["id"]})
+      self.evt_handlers.append({"action": action.__name__, "event": event, "id": control_id})
     else:
       # Is server event handler, generate WebSocket code to forward event
-      self.server_events.append({"action": action, "event": event, "id": control.attributes["id"]})
+      logging.info("Registering WebSocket event...")
+      self.server_events.append(generate_websocket_handler(event, control_id))
+
+      if event in self.socket_events:
+        self.socket_events[event][control_id] = action
+      else:
+        self.socket_events[event] = {control_id: action}
+

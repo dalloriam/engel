@@ -5,6 +5,10 @@ class BaseElement(object):
     self.attributes = {}
     self.attributes["id"] = id
 
+    self.server_events = []
+    self.event_handlers = []
+    self.socket_events = {}
+
     if classname:
       self.attributes["class"] = classname
 
@@ -58,6 +62,15 @@ class BaseContainer(BaseElement):
 
   def get_children_by_classname(self, classname):
     return filter(lambda child: classname in child.attributes["class"], self.children)
+
+  def update_events(self):
+    for child in self.children:
+      if hasattr(child, "update_events"):
+        child.update_events()
+      self.server_events += child.server_events
+      self.event_handlers += child.event_handlers
+      self.socket_events.update(child.socket_events)
+
 
   def compile(self):
     self.content = "".join(map(lambda x: x.compile(), self.children))
