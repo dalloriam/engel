@@ -163,7 +163,7 @@ class View(object):
       action_source = client_action()
       javascript["top_level"] += to_javascript(action_source)
 
-    final_js = "".join(javascript["top_level"]) + self._js_event_root.format(code=javascript["events"] + self._server_event_root.format(code="".join(self.server_events)))
+    final_js = "".join(javascript["top_level"]) + self._js_event_root.format(code="".join(self.evt_handlers) + self._server_event_root.format(code="".join(self.server_events)))
     script = Script(id="main-script", js=final_js)
 
     root.add_child(script)
@@ -186,7 +186,7 @@ class View(object):
     # TODO: Remove possibility for duplicate server_events
     if hasattr(action, "clientside"):
       # Is client event handler, generate client Javascript
-      self.evt_handlers.append({"action": action.__name__, "event": event, "id": control_id})
+      self.evt_handlers.append(generate_event_handler(event, control_id, action.__name__))
     else:
       # Is server event handler, generate WebSocket code to forward event
       logging.info("Registering WebSocket event...")

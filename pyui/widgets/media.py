@@ -11,6 +11,16 @@ class Image(BaseElement):
     self.attributes["src"] = img_url
 
 
+class Video(BaseElement):
+
+  def __init__(self, id, vid_url, classname=None, parent=None):
+    super(Video, self).__init__(id, classname, parent)
+    self.html_tag = "video"
+
+    self.attributes["src"] = vid_url
+    self.attributes["loop"] = "true"
+
+
 class ImageLink(BaseContainer):
 
   def __init__(self, id, link, img_url, classname=None, parent=None):

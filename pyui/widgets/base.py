@@ -69,7 +69,12 @@ class BaseContainer(BaseElement):
         child.update_events()
       self.server_events += child.server_events
       self.event_handlers += child.event_handlers
-      self.socket_events.update(child.socket_events)
+
+      for key in child.socket_events:
+        if key in self.socket_events:
+          self.socket_events[key].update(child.socket_events[key])
+        else:
+          self.socket_events[key] = child.socket_events[key]
 
 
   def compile(self):
