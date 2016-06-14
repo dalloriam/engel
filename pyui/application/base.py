@@ -175,7 +175,8 @@ class View(object):
 
     javascript = {
         "top_level": "",
-        "events": ""
+        "events": "",
+        "server_events": ""
     }
 
     # Compiling methods defined with @client
@@ -186,6 +187,10 @@ class View(object):
     # Compiling event handlers
     for evt in self.evt_handlers:
       javascript["events"] += generate_event_handler(evt["event"], evt["id"], evt["action"])
+
+    # Compiling server events
+    for evt in self.server_events:
+      javascript["server_events"] += generate
 
     final_js = "".join(javascript["top_level"]) + self._js_event_root.format(code=javascript["events"])
     script = Script(id="main-script", js=final_js)
@@ -209,7 +214,5 @@ class View(object):
       # Is client event handler, generate client Javascript
       self.evt_handlers.append({"action": action.__name__, "event": event, "id": control.attributes["id"]})
     else:
-      # TODO: Make this work fully
       # Is server event handler, generate WebSocket code to forward event
       self.server_events.append({"action": action, "event": event, "id": control.attributes["id"]})
-      pass
