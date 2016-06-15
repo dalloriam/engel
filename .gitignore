@@ -7,3 +7,4 @@ app.py
 .DS_Store
 .cache/*
 */.cache/*
+build/*
