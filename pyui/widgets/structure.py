@@ -34,9 +34,11 @@ class List(BaseContainer):
   def __init__(self, id, classname=None, parent=None):
     super(List, self).__init__(id, classname, parent)
     self.html_tag = "ul"
+    self._count = 0
 
   def append(self, html_item):
-    self.add_child(_li(html_item))
+    self.add_child(_li(id=self.attributes["id"] + str(self._count), item=html_item))
+    self._count += 1
 
 
 class _li(BaseContainer):
