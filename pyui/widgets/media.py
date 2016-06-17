@@ -45,3 +45,10 @@ class ViewImageLink(ViewLink):
   def __init__(self, id, img_url, view_name, params=None, classname=None, parent=None):
     super(ViewImageLink, self).__init__(id=view_name, view_name=view_name, params=params, parent=parent)
     self.add_child(Image(id, img_url, classname=classname))
+
+
+class ViewVideoLink(ViewLink):
+
+  def __init__(self, id, vid_url, view_name, params=None, classname=None, parent=None):
+    super(ViewVideoLink, self).__init__(id=view_name, view_name=view_name, params=params, parent=parent)
+    self.add_child(Video(id, vid_url, classname=classname))
