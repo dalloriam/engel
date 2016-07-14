@@ -148,7 +148,7 @@ class View(object):
     if self.stylesheet:
       HeadLink(id="style", link_type="stylesheet", path=self.stylesheet, parent=self._head)
 
-    PageTitle(id="_page-title", text=self.ctx.base_title.format(self.title.content), parent=self._head)
+    PageTitle(id="_page-title", text=self.ctx.base_title.format(self.title), parent=self._head)
 
     # Compiling methods defined with @client
     for client_action in [getattr(self, x) for x in dir(self) if hasattr(getattr(self, x), "clientside")]:
