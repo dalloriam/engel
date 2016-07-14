@@ -28,7 +28,6 @@ def statement(node):
 
   # If all fails, check expression tree
   elif isinstance(node, ast.Expr):
-    print(node.value)
     return expression(node.value) + ";"
 
 

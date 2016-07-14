@@ -1,4 +1,5 @@
 import json
+import logging
 import tornado.websocket
 
 
@@ -6,7 +7,7 @@ def get_socket_listener(application):
   class WebSocketListener(tornado.websocket.WebSocketHandler):
 
     def open(self):
-      print("WebSocket Opened.")
+      logging.info("WebSocket Opened.")
 
     def on_message(self, message):
       # Simply pass event to application
@@ -14,6 +15,7 @@ def get_socket_listener(application):
       event = msg["event"]
       elem = msg["element_id"]
       data = msg["data"] if "data" in msg else None
+      logging.debug("Got WebSocket '{0}' event from {1}".format(event, elem))
 
       if data:
         application.current_view.socket_events[event][elem](data)
@@ -25,6 +27,6 @@ def get_socket_listener(application):
       pass
 
     def close(self):
-      print("WebSocket Closed.")
+      logging.info("WebSocket Closed.")
 
   return WebSocketListener
