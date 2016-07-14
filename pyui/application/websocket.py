@@ -6,8 +6,11 @@ import tornado.websocket
 def get_socket_listener(application):
   class WebSocketListener(tornado.websocket.WebSocketHandler):
 
+    current_client = None
+
     def open(self):
       logging.info("WebSocket Opened.")
+      WebSocketListener.current_client = self
 
     def on_message(self, message):
       # Simply pass event to application
@@ -28,5 +31,6 @@ def get_socket_listener(application):
 
     def close(self):
       logging.info("WebSocket Closed.")
+      WebSocketListener.current_client = None
 
   return WebSocketListener

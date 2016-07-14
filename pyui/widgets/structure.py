@@ -3,9 +3,10 @@ from .base import BaseContainer
 
 class Document(BaseContainer):
 
-  def __init__(self, id, classname=None, parent=None):
+  def __init__(self, id, view, classname=None, parent=None):
     super(Document, self).__init__(id, classname, parent)
     self.html_tag = "html"
+    self.view = view
 
 
 class Head(BaseContainer):
@@ -35,10 +36,28 @@ class List(BaseContainer):
     super(List, self).__init__(id, classname, parent)
     self.html_tag = "ul"
     self._count = 0
+    self._items = []
 
   def append(self, html_item):
-    self.add_child(_li(id=self.attributes["id"] + str(self._count), item=html_item))
+    li_itm = _li(id=self.attributes["id"] + str(self._count), item=html_item)
+    self.add_child(li_itm)
+    self._items.append((html_item, li_itm))
     self._count += 1
+
+  def remove(self, html_item):
+    raw = list(filter(lambda x: x[0] == html_item, self._items))
+    if raw:
+      itm, wrapped = raw[0]
+      self._items.remove(raw[0])
+      self.remove_child(wrapped)
+      self._count -= 1
+    else:
+      raise ValueError("Child not in list.")
+
+  def __getitem__(self, index):
+    return self._items[index][0]
+
+  # TODO: Add __setitem__()
 
 
 class _li(BaseContainer):

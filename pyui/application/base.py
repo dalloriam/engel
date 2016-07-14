@@ -115,7 +115,7 @@ class View(object):
     if self.title is None:
       raise NotImplementedError
 
-    self.document = Document(id="doc")
+    self.document = Document(id="doc", view=self)
 
     self._head = Head(id="head", parent=self.document)
 

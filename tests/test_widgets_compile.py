@@ -125,6 +125,21 @@ def test_list():
   assert len(ls.children[0].children) == 1
   assert isinstance(ls.children[0].children[0], Image)
 
+def test_list_item_remove():
+  ls = List(id="ls")
+  itm = Image(id="yao", img_url="k")
+  ls.append(itm)
+  assert ls._count == 1
+  ls.remove(itm)
+  assert ls._count == 0
+  assert len(ls.children) == 0
+
+def test_list_item_indexer():
+  ls = List(id="ls")
+  itm = Image(id="yao", img_url="k")
+  ls.append(itm)
+  assert ls[0] is itm
+
 def test_inheritance():
   pnl = Panel(id="panel")
   assert len(pnl.children) == 0
