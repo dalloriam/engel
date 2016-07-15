@@ -43,7 +43,8 @@ class List(BaseContainer):
     li_itm.add_child(html_item)
     self._items.append((html_item, li_itm))
     self._count += 1
-    self.redraw()
+    if self.view is not None:
+      self.redraw()
 
   def remove(self, html_item):
     raw = list(filter(lambda x: x[0] == html_item, self._items))
@@ -52,7 +53,10 @@ class List(BaseContainer):
       self._items.remove(raw[0])
       self.remove_child(wrapped)
       self._count -= 1
-      self.redraw()
+
+      # Only send the call to redraw() if the element exists in a rendered view
+      if self.view is not None:
+        self.redraw()
     else:
       raise ValueError("Child not in list.")
 

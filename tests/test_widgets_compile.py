@@ -98,7 +98,7 @@ def test_viewvideolink():
 
 # STRUCTURE WIDGETS
 def test_document():
-  doc = Document(id="doc")
+  doc = Document(id="doc", view=None)
   assert doc.html_tag == "html"
 
 def test_head():

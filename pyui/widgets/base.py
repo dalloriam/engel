@@ -27,7 +27,6 @@ class BaseElement(object):
   def get_content(self):
     return self.content
 
-  # TODO: Add tests for this
   def redraw(self):
     self.view.ctx.socket.try_send_message({"event": "redraw", "element_id": self.attributes["id"], "data": {"inner_html": "".join(map(lambda x: x.compile(), self.children))}})
 
