@@ -1,3 +1,5 @@
+import logging
+
 class BaseElement(object):
 
   def __init__(self, id, classname=None, parent=None):
@@ -12,6 +14,8 @@ class BaseElement(object):
     if classname:
       self.attributes["class"] = classname
 
+    self.view = None
+
     if parent is not None:
       parent.add_child(self)
 
@@ -20,14 +24,12 @@ class BaseElement(object):
 
     self.html_tag = None
 
-    self.view = None
-
   def get_content(self):
     return self.content
-  
+
   # TODO: Add tests for this
   def redraw(self):
-    self.view.ctx.socket.current_client.send_message({"event": "redraw", "element_id": self.attributes["id"], data: {"inner_html": self.compile()}})
+    self.view.ctx.socket.try_send_message({"event": "redraw", "element_id": self.attributes["id"], "data": {"inner_html": "".join(map(lambda x: x.compile(), self.children))}})
 
   def _get_html_tag(self):
     return self.html_tag
@@ -52,8 +54,8 @@ class BaseContainer(BaseElement):
     self.children = []
 
   def add_child(self, child):
-    child.view = self.view
     self.children.append(child)
+    child.view = self.view
 
   def remove_child(self, child):
     self.children.remove(child)

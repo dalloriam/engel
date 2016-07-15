@@ -123,7 +123,7 @@ class View(object):
 
     # TODO: Move this to AST generation, this will allow to get rid of all the hardcoded javascript
     self._js_event_root = "window.onload = function() {{ {code} }};"
-    self._server_event_root = 'ws = new WebSocket("ws://localhost:8080/websocket");ws.onopen = function() {{ {code} }};'
+    self._server_event_root = 'ws = new WebSocket("ws://localhost:8080/websocket");ws.onopen = function() {{ {code} }};ws.onmessage = HandleMessage;'
 
     self.ctx = ctx
 
@@ -131,6 +131,29 @@ class View(object):
     self.evt_handlers = []
 
     self.socket_events = {}
+
+  @client
+  def HandleMessage(event):
+    dat = event.data
+
+    # TODO: impement ast transform from json.loads -> JSON.parse
+    msg = JSON.parse(dat)
+
+    tId = msg["element_id"]
+    evt = msg["event"]
+    msgData = None
+
+    if msg.hasOwnProperty("data"):
+      msgData = msg["data"]
+
+    targetElem = document.getElementById(tId)
+
+    if evt == "redraw":
+      Redraw(targetElem, msgData)
+
+  @client
+  def Redraw(target, data):
+    target.innerHTML = data["inner_html"]
 
   def render(self):
 

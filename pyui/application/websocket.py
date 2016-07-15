@@ -8,6 +8,11 @@ def get_socket_listener(application):
 
     current_client = None
 
+    @staticmethod
+    def try_send_message(msg):
+      if WebSocketListener.current_client:
+        WebSocketListener.current_client.send_message(msg)
+
     def open(self):
       logging.info("WebSocket Opened.")
       WebSocketListener.current_client = self
@@ -27,7 +32,8 @@ def get_socket_listener(application):
 
     def send_message(self, message):
       # Send update message to control
-      pass
+      logging.debug("WebSocket handler sending event to client")
+      WebSocketListener.current_client.write_message(json.dumps(message))
 
     def close(self):
       logging.info("WebSocket Closed.")

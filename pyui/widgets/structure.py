@@ -39,10 +39,11 @@ class List(BaseContainer):
     self._items = []
 
   def append(self, html_item):
-    li_itm = _li(id=self.attributes["id"] + str(self._count), item=html_item)
-    self.add_child(li_itm)
+    li_itm = _li(id=self.attributes["id"] + str(self._count), parent=self)
+    li_itm.add_child(html_item)
     self._items.append((html_item, li_itm))
     self._count += 1
+    self.redraw()
 
   def remove(self, html_item):
     raw = list(filter(lambda x: x[0] == html_item, self._items))
@@ -51,6 +52,7 @@ class List(BaseContainer):
       self._items.remove(raw[0])
       self.remove_child(wrapped)
       self._count -= 1
+      self.redraw()
     else:
       raise ValueError("Child not in list.")
 
@@ -62,7 +64,6 @@ class List(BaseContainer):
 
 class _li(BaseContainer):
 
-  def __init__(self, id, item, classname=None, parent=None):
+  def __init__(self, id, classname=None, parent=None):
     super(_li, self).__init__(id, classname, parent)
     self.html_tag = "li"
-    self.add_child(item)
