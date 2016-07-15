@@ -1,8 +1,8 @@
 import sys
-sys.path.append('../pyui')
+sys.path.append('../popeui')
 
-from pyui.client.compiler.compiler import to_javascript
-from pyui.application.base import client
+from popeui.client.compiler.compiler import to_javascript
+from popeui.application.base import client
 
 
 def test_compile_strings():

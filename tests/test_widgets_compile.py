@@ -1,11 +1,11 @@
 import sys
-sys.path.append('../pyui')
+sys.path.append('../popeui')
 
-from pyui.widgets.abstract import *
-from pyui.widgets.forms import *
-from pyui.widgets.media import *
-from pyui.widgets.structure import *
-from pyui.widgets.text import *
+from popeui.widgets.abstract import *
+from popeui.widgets.forms import *
+from popeui.widgets.media import *
+from popeui.widgets.structure import *
+from popeui.widgets.text import *
 
 # ABSTRACT WIDGETS
 

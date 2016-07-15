@@ -23,13 +23,12 @@ def find_packages(path, base="" ):
   return packages
 
 
-pkgs = find_packages("pyui/", "pyui")
-setup(name='PyUI',
+pkgs = find_packages("popeui/", "popeui")
+setup(name='PopeUI',
       version='0.1',
-      description='Create Miraculous WebUIs in pure Python.',
+      description='Create miraculous WebUIs in pure Python.',
       author='William Dussault',
       author_email='dalloriam@gmail.com',
-      url='theuniverse.servebeer.com',
       package_dir=pkgs,
       packages=pkgs.keys()
 )

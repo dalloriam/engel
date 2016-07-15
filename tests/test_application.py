@@ -1,8 +1,8 @@
 import sys
-sys.path.append('../pyui')
+sys.path.append('../popeui')
 
-from pyui.application.base import Application, View, client
-from pyui.widgets.structure import Document, Head, Body
+from popeui.application.base import Application, View, client
+from popeui.widgets.structure import Document, Head, Body
 
 
 class AppNoBaseTitle(Application):
