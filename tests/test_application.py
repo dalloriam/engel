@@ -68,7 +68,7 @@ def test_view_has_body():
   assert hasattr(v, "root")
   assert isinstance(v.root, Body)
 
-# TODO: TEST JAVASCRIPT WHEN THE NEW AST GENERATOR IS IMPLEMENTED
+# TODO: Test javascript generation when the pure-python ast generation is implemented
 
 
 def test_view_rendering_raises_no_exceptions():
@@ -99,4 +99,4 @@ def test_view_rendering_loads_css():
   assert 'rel="stylesheet"' not in o_out
 
 
-# TODO: TEST EVENT HANDLING (SERVERSIDE AND CLIENTSIDE)
+# TODO: test event handling (client events + server events)
