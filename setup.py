@@ -21,6 +21,7 @@ with open('README.md') as f:
 
 setup(name='popeui',
       author='Dalloriam',
+      author_email='dalloriam@gmail.com',
       url='https://github.com/Dalloriam/popeui',
       version=version,
       packages=find_packages(),
