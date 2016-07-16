@@ -1,34 +1,34 @@
-from distutils.core import setup
-
-import os
-
-def is_package(path):
-  return (
-    os.path.isdir(path) and
-    os.path.isfile(os.path.join(path, '__init__.py'))
-    )
-
-def find_packages(path, base="" ):
-  """ Find all packages in path """
-  packages = {}
-  for item in os.listdir(path):
-    dir = os.path.join(path, item)
-    if is_package( dir ):
-      if base:
-        module_name = "%(base)s.%(item)s" % vars()
-      else:
-        module_name = item
-      packages[module_name] = dir
-      packages.update(find_packages(dir, module_name))
-  return packages
+from setuptools import setup, find_packages
+import re, os
 
 
-pkgs = find_packages("popeui/", "popeui")
-setup(name='PopeUI',
-      version='0.1',
-      description='Create miraculous WebUIs in pure Python.',
-      author='William Dussault',
-      author_email='dalloriam@gmail.com',
-      package_dir=pkgs,
-      packages=pkgs.keys()
+requirements = []
+with open('requirements.txt') as f:
+  requirements = f.read().splitlines()
+
+
+version = ''
+with open('popeui/__init__.py') as f:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
+
+if not version:
+    raise RuntimeError('version is not set')
+
+
+readme = ''
+with open('README.md') as f:
+    readme = f.read()
+
+setup(name='popeui',
+      author='Dalloriam',
+      url='https://github.com/Dalloriam/popeui',
+      version=version,
+      packages=find_packages(),
+      license='MIT',
+      description='Build miraculous web interfaces for your projects.',
+      setup_requires=['pytest-runner'],
+      tests_require=['pytest'],
+      long_description=readme,
+      include_package_data=True,
+      install_requires=requirements
 )

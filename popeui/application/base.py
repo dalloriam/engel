@@ -1,4 +1,3 @@
-import json
 import logging
 import inspect
 from datetime import timedelta
@@ -136,7 +135,7 @@ class View(object):
   def HandleMessage(event):
     dat = event.data
 
-    # TODO: impement ast transform from json.loads -> JSON.parse
+    # TODO: impement ast transform from json.loads -> JSON.parse & build js_stl object encapsulating this function
     msg = JSON.parse(dat)
 
     tId = msg["element_id"]
@@ -179,7 +178,7 @@ class View(object):
       javascript["top_level"] += to_javascript(action_source)
 
     final_js = "".join(javascript["top_level"]) + self._js_event_root.format(code="".join(self.evt_handlers) + self._server_event_root.format(code="".join(self.server_events)))
-    script = Script(id="main-script", js=final_js, parent=self._head)
+    Script(id="main-script", js=final_js, parent=self._head)
 
     return self.document.compile()
 
@@ -202,4 +201,3 @@ class View(object):
         self.socket_events[event][control_id] = action
       else:
         self.socket_events[event] = {control_id: action}
-

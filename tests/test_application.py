@@ -1,8 +1,8 @@
 import sys
 sys.path.append('../popeui')
 
-from popeui.application.base import Application, View, client
-from popeui.widgets.structure import Document, Head, Body
+from popeui.application.base import Application, View
+from popeui.widgets.structure import Document, Body
 
 
 class AppNoBaseTitle(Application):
@@ -34,22 +34,24 @@ class StyleView(View):
 
 def test_app_fails_on_title_undefined():
   try:
-    app = AppNoBaseTitle()
+    AppNoBaseTitle()
     assert False
   except Exception as e:
     assert isinstance(e, NotImplementedError)
 
   try:
-    app = AppBaseTitle()
+    AppBaseTitle()
   except:
     assert False
 
+
 def test_view_fails_on_title_undefined():
   try:
-    v = NoNameView("heh")
+    NoNameView("heh")
     assert False
   except Exception as e:
     assert isinstance(e, NotImplementedError)
+
 
 def test_view_has_document():
   v = BaseView("heh")
@@ -57,10 +59,12 @@ def test_view_has_document():
   assert hasattr(v, "document")
   assert isinstance(v.document, Document)
 
+
 def test_view_has_head():
   v = BaseView("heh")
 
   assert hasattr(v, "_head")
+
 
 def test_view_has_body():
   v = BaseView("heh")
@@ -76,7 +80,7 @@ def test_view_rendering_raises_no_exceptions():
     a = AppBaseTitle()
     v = BaseView(a)
     v.render()
-  except Exception as e:
+  except Exception:
     assert False
 
 

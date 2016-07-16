@@ -8,3 +8,6 @@ app.py
 .cache/*
 */.cache/*
 build/*
+dist/*
+*.egg-info
+.eggs/*

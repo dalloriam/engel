@@ -1,5 +1,3 @@
-import logging
-
 class BaseElement(object):
 
   def __init__(self, id, classname=None, parent=None):
@@ -83,7 +81,6 @@ class BaseContainer(BaseElement):
           self.socket_events[key].update(child.socket_events[key])
         else:
           self.socket_events[key] = child.socket_events[key]
-
 
   def compile(self):
     self.content = "".join(map(lambda x: x.compile(), self.children))
