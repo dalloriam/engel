@@ -1,5 +1,7 @@
 # PopeUI
 
+[![PyPI](https://img.shields.io/pypi/v/popeui.svg?maxAge=2592000)](https://pypi.python.org/pypi/popeui) [![PyPI](https://img.shields.io/pypi/l/popeui.svg?maxAge=2592000)](https://pypi.python.org/pypi/popeui) [![PyPI](https://img.shields.io/pypi/dm/popeui.svg?maxAge=2592000)](https://pypi.python.org/pypi/popeui)
+
 PopeUI is an opinionated framework that allows you to painlessly build cross-platform web interfaces for your projects.
 
 
