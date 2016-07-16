@@ -49,7 +49,9 @@ from popeui.widgets.text import Title, Span
 import os
 
 class FileService(object):
-    """Services are the main way of interacting with the outside world with PopeUI. 	This service encapsulates all interactions with our file, and will be made 		available to our application.
+    """Services are the main way of interacting with the outside world with PopeUI. 
+    This service encapsulates all interactions with our file, and will be made 	
+    available to our application.
     """
     def __init__(self):
         if not os.path.isfile('myfile.txt'):
@@ -65,14 +67,17 @@ class FileService(object):
 
             
 class MainFileView(View):
-    """With PopeUI, views represent the structure of the page currently displayed 	  as well as the different actions handled by the program.
+    """With PopeUI, views represent the structure of the page currently displayed 
+    as well as the different actions handled by the program.
     """
     title = "MyFile.txt"
     
     current_id = 0
     
     def run(self, params=None):
-        """The run() method is called when the application is rendering the page to 		HTML. It is responsible for building the DOM and registering the events 		(originating from both the server and the client) handled by the page.
+        """The run() method is called when the application is rendering the page to 
+        HTML. It is responsible for building the DOM and registering the events 
+        (originating from both the server and the client) handled by the page.
         """
         
         # We create a Panel() object and anchor it to the root of the page.
@@ -111,7 +116,8 @@ class MainFileView(View):
 
 class FileApp(Application):
     """The Application object is the central object tying your PopeUI app together.
-    It holds all the information common to all views, as well as view and service 	  definitions.
+    It holds all the information common to all views, as well as view and service 
+    definitions.
     """
     
     # The base title of the app.
