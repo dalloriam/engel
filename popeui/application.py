@@ -1,3 +1,6 @@
+"""
+Contains all the classes and functions related to the structure of a PopeUI application.
+"""
 import logging
 import inspect
 from datetime import timedelta
@@ -7,18 +10,29 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 
-from .websocket import get_socket_listener
+from .websocket import _get_socket_listener
 
 import threading
 
-from ..widgets.structure import Document, Head, Body
-from ..widgets.abstract import PageTitle, HeadLink, Script
+from .widgets.structure import Document, Head, Body
+from .widgets.abstract import PageTitle, HeadLink, Script
 
-from ..client.compiler.compiler import to_javascript, generate_event_handler, generate_websocket_handler
+from .client.compiler.compiler import to_javascript, generate_event_handler, generate_websocket_handler
 
 
 def client(func):
+  """
+  Decorator used to declare a client-side javascript function.
+  Functions wrapped by this decorator will never be executed as python code,
+  but will be compiled to javascript and sent along the HTML returned by :meth:`~.View.render`.
+
+  :param func: Function to decorate.
+  :returns: Decorated function now returning the python source code of the original function.
+  """
   def wrapper(*args):
+    """
+    Client method. Will be compiled to javascript and run in the browser.
+    """
     lines = inspect.getsource(func).splitlines()[1:]
     i = 0
     for char in lines[0]:
@@ -34,7 +48,7 @@ def client(func):
   return wrapper
 
 
-def get_post_handler(render):
+def _get_post_handler(render):
   class ServerActionHandler(tornado.web.RequestHandler):
 
     def get(self):
@@ -54,17 +68,32 @@ def get_post_handler(render):
   return ServerActionHandler
 
 
-def set_ping(ioloop, timeout):
-  ioloop.add_timeout(timeout, lambda: set_ping(ioloop, timeout))
+def _set_ping(ioloop, timeout):
+  ioloop.add_timeout(timeout, lambda: _set_ping(ioloop, timeout))
 
 
 class Application(object):
+  """
+  The ``Application`` abstract class represents the entirety of a PopeUI application.
+
+  Your application should inherit from this class and redefine the specifics, like Views, Services,
+  and any additional logic required by your project.
+  """
 
   base_title = None
-  favicon = None
+  """
+  Page title pattern for the whole application. Gets set on a per-view basis by ``Application.base_title.format(view.title)``.
+  """
+
+  # TODO: Add favicon
 
   def __init__(self, debug=False):
+    """
+    Constructor of the Application.
 
+    :param debug: Sets the logging level of the application
+    :raises NotImplementedError: When ``Application.base_title`` not set in the class definition.
+    """
     loglevel = logging.DEBUG if debug else logging.WARNING
     logging.basicConfig(format='%(asctime)s - [%(levelname)s] %(message)s', datefmt='%I:%M:%S %p', level=loglevel)
 
@@ -79,37 +108,62 @@ class Application(object):
     self.services = {}
 
   def compile(self, page_name, params=None):
+    """
+    Called by the tornado server. Compiles the view requested by the user by calling its :meth:`~.View.render` method.
+
+    :param page_name: Name of the page to compile
+    :param params: parameters to pass to the page
+    :returns: Either a HTML string or ``None`` (when the page does not exist)
+    """
     logging.info("Compiling " + str(page_name))
     if page_name in self.views:
-      self.current_view = self.views[page_name](ctx=self)
+      self.current_view = self.views[page_name](context=self)
       self.current_view.run(params)
       html = self.current_view.render()
       return html
 
   def run(self):
-
+    """
+    Start the PopeUI application by initializing all registered services and starting a tornado IOLoop in a seperate thread.
+    """
     logging.info("Initializing services...")
     for svc in self.services:
       self.services[svc] = self.services[svc]()
 
     logging.info("Starting webserver...")
-    listener = get_post_handler(self.compile)
-    self.socket = get_socket_listener(self)
+    listener = _get_post_handler(self.compile)
+    self.socket = _get_socket_listener(self)
     tornado.web.Application([(r"/app-data/(.*)", tornado.web.StaticFileHandler, {"path": "app-data"}), (r"/websocket", self.socket), (r"/.*", listener)]).listen(8080)
     ioloop = tornado.ioloop.IOLoop.current()
-    set_ping(ioloop, timedelta(seconds=2))
+    _set_ping(ioloop, timedelta(seconds=2))
     # TODO: This can't be properly stopped on windows, check for fix
     t = threading.Thread(target=ioloop.start)
     t.start()
 
 
 class View(object):
+  """
+  The ``View`` abstract class is used to model the structure of a page, as well as the different user actions handled by
+  the page. To define views in your application, simply inherit this class and override :meth:`run`.
+  """
 
   title = None
+  """
+  The title of the view. Will be formatted into ``Application.base_title``
+  """
 
   stylesheet = None
+  """
+  The stylesheet used for the view.
+  """
 
-  def __init__(self, ctx):
+  def __init__(self, context):
+    """
+    Constructor of the view
+
+    :param context: Reference to the :class:`Application` instanciating the view.
+    :raises NotImplementedError: When ``View.title`` not set in the class definition.
+    """
 
     if self.title is None:
       raise NotImplementedError
@@ -119,17 +173,33 @@ class View(object):
     self._head = Head(id="head", parent=self.document)
 
     self.root = Body(id="body", parent=self.document)
+    """
+    Instance of :class:`~.widgets.structure.Body`. Root element of the view.
+    """
 
     # TODO: Move this to AST generation, this will allow to get rid of all the hardcoded javascript
     self._js_event_root = "window.onload = function() {{ {code} }};"
     self._server_event_root = 'ws = new WebSocket("ws://localhost:8080/websocket");ws.onopen = function() {{ {code} }};ws.onmessage = HandleMessage;'
 
-    self.ctx = ctx
+    self.ctx = context
+    """
+    Reference to the :class:`Application` instanciating the view.
+    """
 
     self.server_events = []
     self.evt_handlers = []
 
     self.socket_events = {}
+
+  def run(self, params=None):
+    """
+    Build the DOM of the view and registers the events handled by the view.
+    This method should tie the whole DOM to ``View.root``.
+
+    :param params: parameters passed to this view
+    :raises NotImplementedError: when not overriden in child class
+    """
+    raise NotImplementedError
 
   @client
   def HandleMessage(event):
@@ -155,6 +225,11 @@ class View(object):
     target.innerHTML = data["inner_html"]
 
   def render(self):
+    """
+    Called by :meth:`~.Application.compile`
+
+    :returns: HTML string representation of the view.
+    """
 
     javascript = {
         "top_level": "",
@@ -162,7 +237,7 @@ class View(object):
         "server_events": ""
     }
 
-    self.document.update_events()
+    self.document._update_events()
     self.server_events += self.document.server_events
     self.evt_handlers += self.document.event_handlers
     self.socket_events.update(self.document.socket_events)
@@ -183,6 +258,9 @@ class View(object):
     return self.document.compile()
 
   def on(self, event, control=None, action=None):
+    """
+    Declare a new event to be handled by the view
+    """
     if not control:
       control = self.root
 

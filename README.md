@@ -42,7 +42,7 @@ In this example, we will build a web front-end to a text file. Exciting, right?
 * Display all lines of a text file.
 
 ```python
-from popeui.application.base import Application, View
+from popeui.application import Application, View
 
 from popeui.widgets.structure import Panel, List
 from popeui.widgets.forms import Button, TextBox

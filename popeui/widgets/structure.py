@@ -2,52 +2,74 @@ from .base import BaseContainer
 
 
 class Document(BaseContainer):
+  """
+  A document. Analogous to the HTML ``<html>`` element.
+  """
+
+  html_tag = "html"
 
   def __init__(self, id, view, classname=None, parent=None):
+    """
+    :param view: :class:`~.application.View` in which the document is declared.
+    """
     super(Document, self).__init__(id, classname, parent)
-    self.html_tag = "html"
     self.view = view
 
 
 class Head(BaseContainer):
-
-  def __init__(self, id, classname=None, parent=None):
-    super(Head, self).__init__(id, classname, parent)
-    self.html_tag = "head"
+  html_tag = "head"
 
 
 class Body(BaseContainer):
-
-  def __init__(self, id, classname=None, parent=None):
-    super(Body, self).__init__(id, classname, parent)
-    self.html_tag = "body"
+  """
+  Simple container analogous to the html ``<body>`` element.
+  """
+  html_tag = "body"
 
 
 class Panel(BaseContainer):
 
-  def __init__(self, id, classname=None, parent=None):
-    super(Panel, self).__init__(id, classname, parent)
-    self.html_tag = "div"
+  """
+  Simple container analogous to the html ``<div>`` element.
+  """
+
+  html_tag = "div"
 
 
 class List(BaseContainer):
 
+  """
+  Bridges python and HTML lists. :class:`List` exposes an interface similar to
+  python lists and takes care of updating the corresponding HTML ``<ul>`` when the python object is updated.
+  """
+
+  html_tag = "ul"
+
   def __init__(self, id, classname=None, parent=None):
     super(List, self).__init__(id, classname, parent)
-    self.html_tag = "ul"
     self._count = 0
     self._items = []
 
-  def append(self, html_item):
+  def append(self, widget):
+    """
+    Append a widget to the list.
+
+    :param widget: Object inheriting :class:`~.widgets.base.BaseElement`
+    """
     li_itm = _li(id=self.attributes["id"] + str(self._count), parent=self)
-    li_itm.add_child(html_item)
-    self._items.append((html_item, li_itm))
+    li_itm.add_child(widget)
+    self._items.append((widget, li_itm))
     self._count += 1
     if self.view is not None:
       self.redraw()
 
-  def remove(self, html_item):
-    raw = list(filter(lambda x: x[0] == html_item, self._items))
+  def remove(self, widget):
+    """
+    Remove a widget from the list.
+
+    :param widget: Object inheriting :class:`~.widgets.base.BaseElement`
+    """
+    raw = list(filter(lambda x: x[0] == widget, self._items))
     if raw:
       itm, wrapped = raw[0]
       self._items.remove(raw[0])
@@ -67,7 +89,4 @@ class List(BaseContainer):
 
 
 class _li(BaseContainer):
-
-  def __init__(self, id, classname=None, parent=None):
-    super(_li, self).__init__(id, classname, parent)
-    self.html_tag = "li"
+  html_tag = "li"

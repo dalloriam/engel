@@ -1,7 +1,7 @@
 import sys
 sys.path.append('../popeui')
 
-from popeui.application.base import Application, View
+from popeui.application import Application, View
 from popeui.widgets.structure import Document, Body
 
 
