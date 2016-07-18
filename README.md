@@ -4,6 +4,8 @@
 
 PopeUI is an opinionated framework that allows you to painlessly build cross-platform web interfaces for your projects.
 
+Take a look at the [documentation](http://popeui.readthedocs.io/en/latest/index.html) for more details.
+
 
 
 ## Installation
