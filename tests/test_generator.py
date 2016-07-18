@@ -2,7 +2,7 @@ import sys
 sys.path.append('../popeui')
 
 from popeui.client.compiler.compiler import to_javascript
-from popeui.application.base import client
+from popeui.application import client
 
 
 def test_compile_strings():

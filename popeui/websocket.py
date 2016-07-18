@@ -3,7 +3,7 @@ import logging
 import tornado.websocket
 
 
-def get_socket_listener(application):
+def _get_socket_listener(application):
   class WebSocketListener(tornado.websocket.WebSocketHandler):
 
     current_client = None
