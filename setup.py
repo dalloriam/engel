@@ -2,11 +2,6 @@ from setuptools import setup, find_packages
 import re, os
 
 
-requirements = []
-with open('requirements.txt') as f:
-  requirements = f.read().splitlines()
-
-
 version = ''
 with open('popeui/__init__.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
@@ -31,5 +26,8 @@ setup(name='popeui',
       tests_require=['pytest'],
       long_description=readme,
       include_package_data=True,
-      install_requires=requirements
+      install_requires=[
+        "tornado==4.4",
+        "requests==2.10.0"
+      ]
 )
