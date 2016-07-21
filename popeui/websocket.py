@@ -22,13 +22,8 @@ def _get_socket_listener(application):
       msg = json.loads(message)
       event = msg["event"]
       elem = msg["element_id"]
-      data = msg["data"] if "data" in msg else None
       logging.debug("Got WebSocket '{0}' event from {1}".format(event, elem))
-
-      if data:
-        application.current_view.socket_events[event][elem](data)
-      else:
-        application.current_view.socket_events[event][elem]()
+      application.current_view.socket_events[event][elem](msg)
 
     def send_message(self, message):
       # Send update message to control

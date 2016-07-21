@@ -41,7 +41,8 @@ class TextBox(BaseElement):
     self.server_events.append(generate_websocket_handler("change", id, 'function(){{return document.getElementById("{ID}").value;}}'.format(ID=id)))
     self.socket_events["change"] = {id: self._set_text}
 
-  def _set_text(self, text=None):
+  def _set_text(self, evt):
+    text = evt["data"]
     if not text:
       self.text = ""
     else:
