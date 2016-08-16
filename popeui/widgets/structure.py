@@ -74,7 +74,6 @@ class List(BaseContainer):
       itm, wrapped = raw[0]
       self._items.remove(raw[0])
       self.remove_child(wrapped)
-      self._count -= 1
 
       # Only send the call to redraw() if the element exists in a rendered view
       if self.view is not None:
@@ -82,10 +81,20 @@ class List(BaseContainer):
     else:
       raise ValueError("Child not in list.")
 
+  def __len__(self):
+    return len(self._items)
+
   def __getitem__(self, index):
     return self._items[index][0]
 
-  # TODO: Add __setitem__()
+  def __setitem__(self, index, widget):
+    li_itm = _li(id=self.attributes["id"] + str(self._count))
+    # TODO: This manually sets the view since the view is normally set by BaseContainer.add_child()
+    # Should investigate overriding the setters on the BaseContainer.children list instead.
+    li_itm.view = self.view
+
+    self.children[index] = li_itm
+    self._items[index] = (widget, li_itm)
 
 
 class _li(BaseContainer):
