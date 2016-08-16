@@ -142,10 +142,10 @@ def test_widget_list_item_remove():
   ls = List(id="ls")
   itm = Image(id="yao", img_url="k")
   ls.append(itm)
-  assert ls._count == 1
+  assert len(ls._items) == 1
   ls.remove(itm)
-  assert ls._count == 0
   assert len(ls.children) == 0
+  assert len(ls._items) == 0
 
 
 def test_widget_list_item_indexer():
@@ -153,6 +153,26 @@ def test_widget_list_item_indexer():
   itm = Image(id="yao", img_url="k")
   ls.append(itm)
   assert ls[0] is itm
+
+
+def test_widget_list_item_setter():
+  ls = List(id="ls")
+  itm = Image(id="yao", img_url="k")
+  itm2 = Panel(id="panel")
+  ls.append(itm)
+  assert ls[0] is itm
+  ls[0] = itm2
+  assert ls[0] is itm2
+
+
+def test_widget_list_item_length():
+  ls = List(id="ls")
+  assert len(ls) == 0
+  itm = Image(id="yao", img_url="k")
+  ls.append(itm)
+  assert len(ls) == 1
+  ls.remove(itm)
+  assert len(ls) == 0
 
 
 def test_widget_inheritance():
