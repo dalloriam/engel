@@ -19,10 +19,14 @@ class ViewLink(BaseContainer):
     :param view_name: Name of the view referenced by this widget
     :param params: Dictionary of parameters to pass to the target view. The parameters will be encoded in the URL.
     """
+    self.view_name = view_name
+    self.params = params
     super(ViewLink, self).__init__(id, classname, parent)
-    url = view_name
-    if params:
-      query_string = "&".join([str(x) + "=" + str(params[x]) for x in params.keys()])
+
+  def _build(self):
+    url = self.view_name
+    if self.params:
+      query_string = "&".join([str(x) + "=" + str(self.params[x]) for x in self.params.keys()])
       if query_string:
         url += "?" + query_string
 
@@ -42,9 +46,13 @@ class HeadLink(BaseElement):
     :param link_type: Type of link (Ex: "stylesheet", "script")
     :param path: Path of the link's target
     """
+    self.path = path
+    self.link_type = link_type
     super(HeadLink, self).__init__(id, classname, parent)
-    self.attributes["href"] = path
-    self.attributes["rel"] = link_type
+
+  def _build(self):
+    self.attributes["href"] = self.path
+    self.attributes["rel"] = self.link_type
     self.autoclosing = True
 
 
@@ -72,9 +80,12 @@ class Script(BaseElement):
 
   html_tag = "script"
 
-  def __init__(self, id, js, classname=None, parent=None):
+  def __init__(self, id, js_path, classname=None, parent=None):
     """
     :param js: Javascript source code.
     """
+    self.js_path = js_path
     super(Script, self).__init__(id, classname, parent)
-    self.content = js
+
+  def _build(self):
+    self.attributes['src'] = self.js_path

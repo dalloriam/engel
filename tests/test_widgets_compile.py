@@ -41,8 +41,8 @@ def test_widget_pagetitle():
 
 
 def test_widget_script():
-  scr = Script(id="scr", js="console.log('test');")
-  assert scr.content == "console.log('test');"
+  scr = Script(id="scr", js_path="/Users/wduss/test.js")
+  assert scr.attributes['src'] == "/Users/wduss/test.js"
 
 
 # FORMS WIDGETS
@@ -57,11 +57,6 @@ def test_widget_textbox():
 
   txt2 = TextBox(id="txtTest", name="name")
   assert "name" in txt2.attributes
-
-  assert "change" in txt2.socket_events
-  assert "txtTest" in txt2.socket_events["change"]
-  assert txt2.socket_events["change"]["txtTest"] == txt2._set_text
-  assert txt2.server_events == ['document.getElementById("txtTest").addEventListener("change", function(){ws.send(JSON.stringify({event: "change", element_id: "txtTest", data: function(){return document.getElementById("txtTest").value;}()}))});']
 
 
 # MEDIA WIDGETS

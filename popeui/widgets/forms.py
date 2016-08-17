@@ -1,5 +1,6 @@
+import html
+
 from .base import BaseElement
-from ..client.compiler.compiler import generate_websocket_handler
 
 
 class Button(BaseElement):
@@ -24,10 +25,13 @@ class TextBox(BaseElement):
     Updates the python object to match the client textbox value.
   """
 
-  def __init__(self, id, name=None, classname=None, parent=None):
-    super(TextBox, self).__init__(id, classname, parent)
-    self.html_tag = "input"
+  html_tag = 'input'
 
+  def __init__(self, id, name=None, classname=None, parent=None):
+    self.name = name
+    super(TextBox, self).__init__(id, classname, parent)
+
+  def _build(self):
     self.text = ""
     """
     Contents of the textbox.
@@ -35,15 +39,16 @@ class TextBox(BaseElement):
 
     self.attributes["type"] = "text"
 
-    if name:
-      self.attributes["name"] = name
+    if self.name:
+      self.attributes["name"] = self.name
 
-    self.server_events.append(generate_websocket_handler("change", id, 'function(){{return document.getElementById("{ID}").value;}}'.format(ID=id)))
-    self.socket_events["change"] = {id: self._set_text}
+  def _set_text(self, event, interface):
+    self.text = event['event_object']['target']['value']
 
-  def _set_text(self, evt):
-    text = evt["data"]
-    if not text:
-      self.text = ""
-    else:
-      self.text = text
+  def __setattr__(self, name, value):
+    super(TextBox, self).__setattr__(name, value)
+    if name == 'view' and value is not None:
+      self.view.on('change', self._set_text, '#' + str(self.attributes['id']))
+
+    elif name == 'text' and value:
+      self.__dict__[name] = html.escape(value)

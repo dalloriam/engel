@@ -1,37 +1,129 @@
+import os
 import json
 import logging
-import tornado.websocket
+import asyncio
+
+import webbrowser
+
+from collections import defaultdict
+
+from autobahn.asyncio.websocket import WebSocketServerFactory, WebSocketServerProtocol
 
 
-def _get_socket_listener(application):
-  class WebSocketListener(tornado.websocket.WebSocketHandler):
+class EventProcessor(object):
 
-    current_client = None
+  def __init__(self):
+    self.handlers = defaultdict(lambda: defaultdict(lambda: []))
 
-    @staticmethod
-    def try_send_message(msg):
-      if WebSocketListener.current_client:
-        WebSocketListener.current_client.send_message(msg)
+  def register(self, event, callback, selector=None):
+    print('Registering: ' + str(event))
 
-    def open(self):
-      logging.info("WebSocket Opened.")
-      WebSocketListener.current_client = self
+    if selector:
+      key = str(id(callback))
+    else:
+      key = '_'
 
-    def on_message(self, message):
-      # Simply pass event to application
-      msg = json.loads(message)
-      event = msg["event"]
-      elem = msg["element_id"]
-      logging.debug("Got WebSocket '{0}' event from {1}".format(event, elem))
-      application.current_view.socket_events[event][elem](msg)
+    self.handlers[event][key].append(callback)
 
-    def send_message(self, message):
-      # Send update message to control
-      logging.debug("WebSocket handler sending event to client")
-      WebSocketListener.current_client.write_message(json.dumps(message))
+    if event not in ('init', 'load', 'close'):
+      capture = False
+      if selector is None:
+        selector = 'html'
+        capture = True
 
-    def close(self):
-      logging.info("WebSocket Closed.")
-      WebSocketListener.current_client = None
+      print('Dispatching: ' + str(event))
+      self.dispatch({'name': 'subscribe', 'event': event, 'selector': selector, 'capture': capture, 'key': str(id(callback))})
 
-  return WebSocketListener
+  def unregister(self, event, callback, selector=None):
+    if event not in self.handlers:
+      return
+
+    if selector is None:
+      self.handlers[event]['_'].remove(callback)
+    else:
+      self.handlers[event].pop(str(id(callback)))
+
+    if event not in ('init', 'load', 'close'):
+      self.dispatch({'name': 'unsubscribe', 'event': event, 'selector': selector, 'key': str(id(callback))})
+
+  def dispatch(self, command):
+    self.protocol.sendMessage(bytes(json.dumps(command), 'utf-8'), False)
+
+  @asyncio.coroutine
+  def process(self, protocol, event):
+    self.protocol = protocol
+    event_type = event['event']
+
+    if event_type in self.handlers:
+      if 'key' in event:
+        key = event['key']
+        if key in self.handlers[event_type]:
+          for handler in self.handlers[event_type][key]:
+            if callable(handler):
+              command = yield from handler(event, self)
+
+              if command:
+                self.dispatch(command)
+
+      for handler in self.handlers[event_type]['_']:
+        if callable(handler):
+          command = yield from handler(event, self)
+          if command:
+            self.dispatch(command)
+
+
+class EventProtocol(WebSocketServerProtocol):
+
+  def onConnect(self, request):
+    logging.info("Client connecting: %s" % request.peer)
+
+  def onOpen(self):
+    logging.info("WebSocket connection open")
+
+  @asyncio.coroutine
+  def onMessage(self, payload, isBinary):
+    if isBinary:
+      logging.info("Binary message received (NOT SUPPORTED YET): {} bytes".format(len(payload)))
+    else:
+      logging.info("Text message received: {}".format(payload.decode('utf-8')))
+      body = json.loads(payload.decode('utf-8'))
+      if 'event' in body:
+        yield from self.processor.process(self, body)
+
+  def onClose(self, wasClean, code, reason):
+    logging.info("WebSocket connection closed: {}".format(reason))
+    exit(0)
+
+
+class EventServer(object):
+
+  def __init__(self, hostname="localhost", port="8080", processor=None):
+    self.hostname = hostname
+    self.port = port
+    self.processor = processor
+
+    factory = WebSocketServerFactory(u"ws://" + hostname + u":" + str(port))
+
+    protocol = EventProtocol
+    protocol.processor = processor
+    protocol.app = self
+
+    factory.protocol = protocol
+
+    self.loop = asyncio.get_event_loop()
+    self.server = self.loop.create_server(factory, '0.0.0.0', port)
+
+  def start(self):
+    self.loop.run_until_complete(self.server)
+
+    try:
+      path = os.path.dirname(os.path.realpath(__file__))
+      webbrowser.open('file:///' + os.path.join(path, 'client/index.html'))
+      self.loop.run_forever()
+
+    except KeyboardInterrupt:
+      pass
+
+    finally:
+      self.server.close()
+      self.loop.close()
