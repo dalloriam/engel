@@ -27,7 +27,8 @@ setup(name='popeui',
       long_description=readme,
       include_package_data=True,
       install_requires=[
-        "tornado==4.4",
-        "requests==2.10.0"
+        "autobahn==0.13.0",
+        "requests==2.10.0",
+        "asyncio==3.4.3"
       ]
 )
