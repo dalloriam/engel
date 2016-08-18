@@ -1,5 +1,4 @@
 from .base import BaseElement
-from .abstract import ViewLink
 
 
 class Title(BaseElement):
@@ -69,14 +68,3 @@ class TextLink(BaseElement):
 
   def _build(self):
     self.attributes["href"] = self.url
-
-
-class ViewTextLink(ViewLink):
-  """
-  Text widget linking to another view.
-  """
-
-  def __init__(self, id, text, view_name, params=None, classname=None, parent=None):
-    self.text = text
-    super(ViewTextLink, self).__init__(id=id, view_name=view_name, params=params, classname=classname, parent=parent)
-    self.add_child(Span(id=self.attributes['id'] + "-span", text=self.text))

@@ -86,7 +86,7 @@ def test_view_rendering_raises_no_exceptions():
   try:
     a = AppBaseTitle()
     v = BaseView(a)
-    v.render()
+    v._render()
   except Exception:
     assert False
 
@@ -94,7 +94,7 @@ def test_view_rendering_raises_no_exceptions():
 def test_view_rendering_renders_title():
   a = AppBaseTitle()
   v = BaseView(a)
-  o_v = v.render()
+  o_v = v._render()
   assert '<title id="_page-title">base</title>' in o_v['html']
 
 
@@ -103,8 +103,8 @@ def test_view_rendering_loads_css():
   ov = BaseView(a)
   v = StyleView(a)
 
-  o_out = ov.render()
-  v_out = v.render()
+  o_out = ov._render()
+  v_out = v._render()
 
   assert 'rel="stylesheet"' in v_out['html']
   assert 'rel="stylesheet"' not in o_out['html']

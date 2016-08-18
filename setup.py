@@ -25,6 +25,7 @@ setup(name='popeui',
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
       long_description=readme,
+      package_data={'': ['index.html', 'popejs.js']},
       include_package_data=True,
       install_requires=[
         "autobahn==0.13.0",

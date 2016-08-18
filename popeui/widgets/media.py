@@ -1,5 +1,4 @@
 from .base import BaseElement, BaseContainer
-from .abstract import ViewLink
 
 
 class Image(BaseElement):
@@ -63,29 +62,3 @@ class Audio(BaseElement):
 
   def _build(self):
     self.attributes["src"] = self.audio_path
-
-
-class ViewImageLink(ViewLink):
-  """
-  An image widget, with the added feature of linking to another view
-  """
-
-  def __init__(self, id, img_url, view_name, params=None, classname=None, parent=None):
-    self.img_url = img_url
-    self.view_name = view_name
-    self.params = params
-    super(ViewImageLink, self).__init__(id=view_name, view_name=view_name, params=params, parent=parent)
-    self.add_child(Image(self.attributes['id'] + '-img', self.img_url, classname=self.attributes.get('class')))
-
-
-class ViewVideoLink(ViewLink):
-  """
-  A video widget, with the added feature of linking to another view.
-  """
-
-  def __init__(self, id, vid_url, view_name, params=None, classname=None, parent=None):
-    self.vid_url = vid_url
-    self.view_name = view_name
-    self.params = params
-    super(ViewVideoLink, self).__init__(id=view_name, view_name=view_name, params=params, parent=parent)
-    self.add_child(Video(self.attributes['id'], self.vid_url, classname=self.attributes.get('class')))

@@ -49,6 +49,8 @@ class BaseElement(object):
     super(BaseElement, self).__setattr__(name, value)
     if name == 'parent' and value is not None:
       self.view = self.parent.view
+    elif name == 'parent' and value is None:
+      self.view = None
 
   def _format_attributes(self):
     return "".join([' {0}="{1}"'.format(x, self.attributes[x])for x in self.attributes.keys()])
@@ -106,6 +108,13 @@ class BaseContainer(BaseElement):
     :param child: Object inheriting :class:`BaseElement`
     """
     self.children.remove(child)
+    child.parent = None
+
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({
+        'name': 'remove',
+        'selector': '#' + child.attributes['id']
+      })
 
   def get_element_by_id(self, id):
     """
@@ -126,8 +135,8 @@ class BaseContainer(BaseElement):
     """
     .. note::
       This method is not recursive (yet). It only searches in the immediate children of the widget.
-    Find an immediate child widget by its HTML class.
 
+    Find an immediate child widget by its HTML class
     :param classname: HTML class of the widgets to find.
     :returns: List of objects inheriting :class:`BaseElement`
     """

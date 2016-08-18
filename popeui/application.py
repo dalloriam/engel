@@ -45,11 +45,11 @@ class Application(object):
     self.views = {}
     self.current_view = None
 
-    self.register('init', lambda evt, interface: self.load_view('default'))
+    self.register('init', lambda evt, interface: self._load_view('default'))
 
   def start(self):
     """
-    Start the PopeUI application by initializing all registered services and starting a tornado IOLoop in a seperate thread.
+    Start the PopeUI application by initializing all registered services and starting an Autobahn IOLoop.
     """
     # TODO: Support params for services by mapping {servicename: {class, params}}?
     for service in self.services.keys():
@@ -58,29 +58,59 @@ class Application(object):
     self.server.start()
 
   def register(self, event, callback, selector=None):
+    """
+    Resister an event that you want to monitor.
+
+    :param event: Name of the event to monitor
+    :param callback: Callback function for when the event is received (Params: event, interface).
+    :param selector: `(Optional)` CSS selector for the element(s) you want to monitor.
+    """
     self.processor.register(event, callback, selector)
 
   def unregister(self, event, callback, selector=None):
+    """
+    Unregisters an event that was being monitored.
+
+    :param event: Name of the event to monitor
+    :param callback: Callback function for when the event is received (Params: event, interface).
+    :param selector: `(Optional)` CSS selector for the element(s) you want to monitor
+    """
     self.processor.unregister(event, callback, selector)
 
   def dispatch(self, command):
+    """
+    Method used for sending events to the client. Refer to ``popeui/client/popejs.js`` to see the events supported by the client.
+
+    :param command: Command dict to send to the client.
+    """
     self.processor.dispatch(command)
 
   @asyncio.coroutine
-  def load_view(self, view_name):
+  def _load_view(self, view_name):
     if view_name not in self.views:
       raise NotImplementedError
     self.current_view = self.views[view_name](self)
-    return self.current_view.render()
+    return self.current_view._render()
 
 
 class View(object):
 
   title = None
+  """
+  Title of the view.
+  """
 
   libraries = []
+  """
+  Javascript libraries used by the view.
+  """
 
   def __init__(self, context):
+    """
+    Constructor of the view.
+
+    :param context: Application instantiating the view.
+    """
 
     if self.title is None:
       raise NotImplementedError
@@ -102,12 +132,27 @@ class View(object):
     self.context.register('load', self._unpack_events)
 
   def build(self):
+    """
+    Method building the layout of the view. Override this in your view subclass to define a layout.
+    """
     raise NotImplementedError
 
   def on(self, event, callback, selector=None):
+    """
+    Register an event during :meth:`~.application.View.build`. The events will be subscribed to once the page is loaded.
+
+    :param event: Name of the event to monitor
+    :param callback: Callback function for when the event is received (Params: event, interface).
+    :param selector: `(Optional)` CSS selector for the element(s) you want to monitor
+    """
     self._event_cache.append({'event': event, 'callback': asyncio.coroutine(callback), 'selector': selector})
 
   def dispatch(self, command):
+    """
+    Dispatch a command to the client at view-level.
+
+    :param command: Command dict to send to the client.
+    """
     self.context.dispatch(command)
 
   @asyncio.coroutine
@@ -116,7 +161,7 @@ class View(object):
     for evt in self._event_cache:
       self.context.register(evt['event'], evt['callback'], evt['selector'])
 
-  def render(self):
+  def _render(self):
     PageTitle(id="_page-title", text=self.context.base_title.format(self.title), parent=self._head)
     self.build()
     return {'name': 'init', 'html': self._doc_root.compile()}

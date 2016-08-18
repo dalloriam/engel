@@ -9,17 +9,6 @@ from popeui.widgets.text import *
 
 
 # ABSTRACT WIDGETS
-def test_widget_viewlink():
-  view_link1 = ViewLink(id="hello", view_name="test")
-  view_link2 = ViewLink(id="hello", view_name="test", params={"id": 3})
-
-  v1 = view_link1.compile()
-  v2 = view_link2.compile()
-
-  assert v1 == '<a href="test" id="hello"></a>' or v1 == '<a id="hello" href="test"></a>'
-  assert v2 == '<a href="test?id=3" id="hello"></a>' or v2 == '<a id="hello" href="test?id=3"></a>'
-
-
 def test_widget_headlink():
   hlink1 = HeadLink(id="h", link_type="stylesheet", path="application.css")
   o = hlink1.compile()
@@ -85,18 +74,6 @@ def test_widget_imagelink():
 def test_widget_audio():
   aud = Audio(id="aud", audio_path="test.mp3")
   assert aud.attributes["src"] == "test.mp3"
-
-
-def test_widget_viewimagelink():
-  vil = ViewImageLink(id="vil", img_url="test.jpg", view_name="Alo")
-  assert len(vil.children) == 1
-  assert isinstance(vil.children[0], Image)
-
-
-def test_widget_viewvideolink():
-  vil = ViewVideoLink(id="vil", vid_url="test.mp4", view_name="Alo")
-  assert len(vil.children) == 1
-  assert isinstance(vil.children[0], Video)
 
 
 # STRUCTURE WIDGETS

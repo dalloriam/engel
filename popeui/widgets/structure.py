@@ -1,5 +1,5 @@
 from .base import BaseContainer
-from .abstract import HeadLink, Script
+from .abstract import HeadLink
 
 
 class Document(BaseContainer):
@@ -21,9 +21,19 @@ class Head(BaseContainer):
   html_tag = "head"
 
   def load_script(self, id, path):
-    self.add_child(Script(id=id, js_path=path))
+    """
+    Proper way to dynamically inject a script in a page.
+
+    :param path: Path of the script to inject.
+    """
+    self.view.dispatch({'name': 'script', 'path': path})
 
   def load_stylesheet(self, id, path):
+    """
+    Proper way to dynamically inject a stylesheet in a page.
+
+    :param path: Path of the stylesheet to inject.
+    """
     self.add_child(HeadLink(id=id, link_type="stylesheet", path=path))
 
 
@@ -81,10 +91,6 @@ class List(BaseContainer):
       itm, wrapped = raw[0]
       self._items.remove(raw[0])
       self.remove_child(wrapped)
-
-      # Only send the call to redraw() if the element exists in a rendered view
-      if self.view is not None:
-        self.redraw()
     else:
       raise ValueError("Child not in list.")
 

@@ -27,6 +27,11 @@ function init() {
                 return d.firstChild;
             });
         }
+        else if (command.name == "script") {
+            $.getScript(command.path, function(data, textStatus, jqxhr) {
+                console.log("Script Loaded.");
+            });
+        }
         else if (command.name == "remove") {
             d3.selectAll(command.selector).remove()
         }
@@ -40,7 +45,7 @@ function init() {
             d3.selectAll(command.selector).classed(command.cl, false)
         }
         else if (command.name == "text") {
-            d3.selectAll(command.selector).text(command.text)
+            $(command.selector).val(command.text);
         }
         else if (command.name == "attr") {
             d3.selectAll(command.selector).attr(command.attr, command.value)

@@ -118,7 +118,7 @@ class EventServer(object):
 
     try:
       path = os.path.dirname(os.path.realpath(__file__))
-      webbrowser.open('file:///' + os.path.join(path, 'client/index.html'))
+      webbrowser.open('file:///' + os.path.join(path, 'index.html'))
       self.loop.run_forever()
 
     except KeyboardInterrupt:

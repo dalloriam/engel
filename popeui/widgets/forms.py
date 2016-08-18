@@ -42,6 +42,15 @@ class TextBox(BaseElement):
     if self.name:
       self.attributes["name"] = self.name
 
+  def set_text(self, text):
+    """
+    Sets the textbox text from the server & updates the client.
+
+    :param text: Text of the textbox
+    """
+    self.text = text
+    self.view.dispatch({'name': 'text', 'selector': '#' + self.attributes['id'], 'text': text})
+
   def _set_text(self, event, interface):
     self.text = event['event_object']['target']['value']
 
