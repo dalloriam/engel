@@ -51,13 +51,14 @@ class TextBox(BaseElement):
     self.text = text
     self.view.dispatch({'name': 'text', 'selector': '#' + self.attributes['id'], 'text': text})
 
+  def on_view_attached(self):
+    super(TextBox, self).on_view_attached()
+    self.view.on('change', self._set_text, '#' + str(self.attributes['id']))
+
   def _set_text(self, event, interface):
     self.text = event['event_object']['target']['value']
 
   def __setattr__(self, name, value):
     super(TextBox, self).__setattr__(name, value)
-    if name == 'view' and value is not None:
-      self.view.on('change', self._set_text, '#' + str(self.attributes['id']))
-
-    elif name == 'text' and value:
+    if name == 'text' and value:
       self.__dict__[name] = html.escape(value)
