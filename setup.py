@@ -25,9 +25,11 @@ setup(name='popeui',
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
       long_description=readme,
+      package_data={'': ['index.html', 'popejs.js']},
       include_package_data=True,
       install_requires=[
-        "tornado==4.4",
-        "requests==2.10.0"
+        "autobahn==0.13.0",
+        "requests==2.10.0",
+        "asyncio==3.4.3"
       ]
 )

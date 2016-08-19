@@ -23,26 +23,34 @@ class BaseElement(object):
 
     self.attributes["id"] = id
 
-    self.server_events = []
-    self.event_handlers = []
-    self.socket_events = {}
-
     if classname:
       self.attributes["class"] = classname
+
+    self._build()
 
     self.view = None
     """
     Instance of :class:`~.application.View` in which this widget was declared.
     """
 
-    if parent is not None:
-      parent.add_child(self)
-
     self.autoclosing = False
     self.content = ""
 
+    if parent is not None:
+      parent.add_child(self)
+
+  def _build(self):
+    pass
+
   def _get_html_tag(self):
     return self.html_tag
+
+  def __setattr__(self, name, value):
+    super(BaseElement, self).__setattr__(name, value)
+    if name == 'parent' and value is not None:
+      self.view = self.parent.view
+    elif name == 'parent' and value is None:
+      self.view = None
 
   def _format_attributes(self):
     return "".join([' {0}="{1}"'.format(x, self.attributes[x])for x in self.attributes.keys()])
@@ -71,8 +79,8 @@ class BaseContainer(BaseElement):
     """
     Constructor of the Base Container
     """
-    super(BaseContainer, self).__init__(id, classname, parent)
     self.children = []
+    super(BaseContainer, self).__init__(id, classname, parent)
     """
     List of objects inheriting :class:`BaseElement`.
     """
@@ -84,13 +92,14 @@ class BaseContainer(BaseElement):
     :param child: Object inheriting :class:`BaseElement`.
     """
     self.children.append(child)
-    child.view = self.view
+    child.parent = self
 
-  def redraw(self):
-    """
-    Trigger a client-side redrawing of all the children of this widget
-    """
-    self.view.ctx.socket.try_send_message({"event": "redraw", "element_id": self.attributes["id"], "data": {"inner_html": "".join(map(lambda x: x.compile(), self.children))}})
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({
+        'name': 'append',
+        'html': child.compile(),
+        'selector': '#' + str(self.attributes['id'])
+      })
 
   def remove_child(self, child):
     """
@@ -99,6 +108,13 @@ class BaseContainer(BaseElement):
     :param child: Object inheriting :class:`BaseElement`
     """
     self.children.remove(child)
+    child.parent = None
+
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({
+        'name': 'remove',
+        'selector': '#' + child.attributes['id']
+      })
 
   def get_element_by_id(self, id):
     """
@@ -119,25 +135,12 @@ class BaseContainer(BaseElement):
     """
     .. note::
       This method is not recursive (yet). It only searches in the immediate children of the widget.
-    Find an immediate child widget by its HTML class.
 
+    Find an immediate child widget by its HTML class
     :param classname: HTML class of the widgets to find.
     :returns: List of objects inheriting :class:`BaseElement`
     """
     return list(filter(lambda child: classname in child.attributes["class"], self.children))
-
-  def _update_events(self):
-    for child in self.children:
-      if hasattr(child, "_update_events"):
-        child._update_events()
-      self.server_events += child.server_events
-      self.event_handlers += child.event_handlers
-
-      for key in child.socket_events:
-        if key in self.socket_events:
-          self.socket_events[key].update(child.socket_events[key])
-        else:
-          self.socket_events[key] = child.socket_events[key]
 
   def compile(self):
     """

@@ -7,28 +7,6 @@
 from .base import BaseContainer, BaseElement
 
 
-class ViewLink(BaseContainer):
-  """
-  Base class for all widgets with the ability of linking to other views.
-  """
-
-  html_tag = "a"
-
-  def __init__(self, id, view_name, params=None, classname=None, parent=None):
-    """
-    :param view_name: Name of the view referenced by this widget
-    :param params: Dictionary of parameters to pass to the target view. The parameters will be encoded in the URL.
-    """
-    super(ViewLink, self).__init__(id, classname, parent)
-    url = view_name
-    if params:
-      query_string = "&".join([str(x) + "=" + str(params[x]) for x in params.keys()])
-      if query_string:
-        url += "?" + query_string
-
-    self.attributes["href"] = url
-
-
 class HeadLink(BaseElement):
   """
   Widget representing links described in the ``<head>`` section of a typical HTML document.
@@ -42,9 +20,13 @@ class HeadLink(BaseElement):
     :param link_type: Type of link (Ex: "stylesheet", "script")
     :param path: Path of the link's target
     """
+    self.path = path
+    self.link_type = link_type
     super(HeadLink, self).__init__(id, classname, parent)
-    self.attributes["href"] = path
-    self.attributes["rel"] = link_type
+
+  def _build(self):
+    self.attributes["href"] = self.path
+    self.attributes["rel"] = self.link_type
     self.autoclosing = True
 
 
@@ -67,14 +49,16 @@ class PageTitle(BaseElement):
 class Script(BaseElement):
   """
   Widget representing a script element.
-  This widget is used by :meth:`~.application.View.render` as a host for the sum of all the compiled client methods.
   """
 
   html_tag = "script"
 
-  def __init__(self, id, js, classname=None, parent=None):
+  def __init__(self, id, js_path, classname=None, parent=None):
     """
-    :param js: Javascript source code.
+    :param js_path: Javascript source code.
     """
+    self.js_path = js_path
     super(Script, self).__init__(id, classname, parent)
-    self.content = js
+
+  def _build(self):
+    self.attributes['src'] = self.js_path
