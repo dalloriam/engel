@@ -52,6 +52,9 @@ class BaseElement(object):
     elif name == 'parent' and value is None:
       self.view = None
 
+    elif name == 'view' and value is not None:
+      self.on_view_attached()
+
   def _format_attributes(self):
     return "".join([' {0}="{1}"'.format(x, self.attributes[x])for x in self.attributes.keys()])
 
@@ -68,6 +71,9 @@ class BaseElement(object):
     :returns: HTML string representing this widget.
     """
     return self._generate_html()
+
+  def on_view_attached(self):
+    pass
 
 
 class BaseContainer(BaseElement):
