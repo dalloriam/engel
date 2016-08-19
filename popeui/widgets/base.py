@@ -73,6 +73,9 @@ class BaseElement(object):
     return self._generate_html()
 
   def on_view_attached(self):
+    """
+    Gets triggered when the widget gets attached to a view.
+    """
     pass
 
 
