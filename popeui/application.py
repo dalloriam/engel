@@ -89,6 +89,8 @@ class Application(object):
   def _load_view(self, view_name):
     if view_name not in self.views:
       raise NotImplementedError
+    if self.current_view is not None:
+      self.current_view.unload()
     self.current_view = self.views[view_name](self)
     return self.current_view._render()
 
@@ -160,6 +162,11 @@ class View(object):
     self.is_loaded = True
     for evt in self._event_cache:
       self.context.register(evt['event'], evt['callback'], evt['selector'])
+
+  def unload(self):
+    self.is_loaded = False
+    for evt in self._event_cache:
+      self.context.unregister(evt['event'], evt['callback'], evt['selector'])
 
   def _render(self):
     PageTitle(id="_page-title", text=self.context.base_title.format(self.title), parent=self._head)
