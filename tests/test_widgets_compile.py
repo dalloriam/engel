@@ -185,9 +185,3 @@ def test_widget_textlink():
   assert t.content == "abcd"
   assert "href" in t.attributes
   assert t.attributes["href"] == "http://www.google.ca"
-
-
-def test_widget_viewtextlink():
-  vtl = ViewTextLink(id="id", text="abcd", view_name="test")
-  assert len(vtl.children) == 1
-  assert isinstance(vtl.children[0], Span)

@@ -4,7 +4,7 @@
   into usable widgets.
 """
 
-from .base import BaseContainer, BaseElement
+from .base import BaseElement
 
 
 class HeadLink(BaseElement):
@@ -24,7 +24,7 @@ class HeadLink(BaseElement):
     self.link_type = link_type
     super(HeadLink, self).__init__(id, classname, parent)
 
-  def _build(self):
+  def build(self):
     self.attributes["href"] = self.path
     self.attributes["rel"] = self.link_type
     self.autoclosing = True
@@ -60,5 +60,5 @@ class Script(BaseElement):
     self.js_path = js_path
     super(Script, self).__init__(id, classname, parent)
 
-  def _build(self):
+  def build(self):
     self.attributes['src'] = self.js_path

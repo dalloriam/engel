@@ -12,7 +12,7 @@ class Image(BaseElement):
     self.img_url = img_url
     super(Image, self).__init__(id, classname, parent)
 
-  def _build(self):
+  def build(self):
     self.attributes["src"] = self.img_url
 
 
@@ -27,7 +27,7 @@ class Video(BaseElement):
     self.vid_url = vid_url
     super(Video, self).__init__(id, classname, parent)
 
-  def _build(self):
+  def build(self):
     self.attributes["src"] = self.vid_url
     self.attributes["loop"] = "true"
 
@@ -45,7 +45,7 @@ class ImageLink(BaseContainer):
     super(ImageLink, self).__init__(id, classname, parent)
     self.add_child(Image(self.attributes['id'] + '-img', self.img_url))
 
-  def _build(self):
+  def build(self):
     self.attributes['href'] = self.link
 
 
@@ -60,5 +60,5 @@ class Audio(BaseElement):
     self.audio_path = audio_path
     super(Audio, self).__init__(id, classname, parent)
 
-  def _build(self):
+  def build(self):
     self.attributes["src"] = self.audio_path

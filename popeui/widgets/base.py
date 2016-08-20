@@ -26,8 +26,6 @@ class BaseElement(object):
     if classname:
       self.attributes["class"] = classname
 
-    self._build()
-
     self.view = None
     """
     Instance of :class:`~.application.View` in which this widget was declared.
@@ -36,10 +34,16 @@ class BaseElement(object):
     self.autoclosing = False
     self.content = ""
 
+    self.build()
+
     if parent is not None:
       parent.add_child(self)
 
-  def _build(self):
+  def build(self):
+    """
+    This method is called between the initialization of the widget and its binding to a view.
+    Add here any procedure required to take place before binding to a view (Ex: add child widgets).
+    """
     pass
 
   def _get_html_tag(self):
