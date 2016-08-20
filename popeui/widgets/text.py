@@ -66,5 +66,5 @@ class TextLink(BaseElement):
 
     self.content = text
 
-  def _build(self):
+  def build(self):
     self.attributes["href"] = self.url

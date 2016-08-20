@@ -34,13 +34,13 @@ class ImageCard(BaseCard):
     :param text: Description of the card
     :param img_url: Image of the card
     """
-    super(ImageCard, self).__init__(id="card-" + id, classname=classname, parent=parent)
-    self.title = Title(id="card-" + id + "-title", text=title, classname="card-title", size=3, parent=self)
+    super(ImageCard, self).__init__(id=id, classname=classname, parent=parent)
+    self.title = Title(id=id + "-title", text=title, classname="card-title", size=3, parent=self)
 
-    self.block = Panel(id="card-" + id + "-block", classname="card-block", parent=self)
+    self.block = Panel(id=id + "-block", classname="card-block", parent=self)
 
-    self.image = Image(id="card-" + id + "-image", img_url=img_url, classname="card-image-top img-fluid", parent=self.block)
-    self.text = Paragraph(id="card-" + id + "-text", text=text, classname="card-text", parent=self.block)
+    self.image = Image(id=id + "-image", img_url=img_url, classname="card-image-top img-fluid", parent=self.block)
+    self.text = Paragraph(id=id + "-text", text=text, classname="card-text", parent=self.block)
 
 
 class CardColumns(Panel):

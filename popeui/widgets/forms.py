@@ -31,7 +31,7 @@ class TextBox(BaseElement):
     self.name = name
     super(TextBox, self).__init__(id, classname, parent)
 
-  def _build(self):
+  def build(self):
     self.text = ""
     """
     Contents of the textbox.
