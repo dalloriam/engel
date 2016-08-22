@@ -102,6 +102,11 @@ class View(object):
   Title of the view.
   """
 
+  stylesheet = None
+  """
+  Stylesheet of the view.
+  """
+
   libraries = []
   """
   Javascript libraries used by the view.
@@ -116,6 +121,7 @@ class View(object):
 
     if self.title is None:
       raise NotImplementedError
+
     self.is_loaded = False
     self._doc_root = Document(id="popeui-main", view=self)
     self._head = Head(id="popeui-head", parent=self._doc_root)
@@ -128,6 +134,9 @@ class View(object):
         self._head.load_stylesheet(id(stylesheet), stylesheet)
       for script in library.scripts:
         self._head.load_script(id(script), script)
+
+    if self.stylesheet is not None:
+      self._head.load_stylesheet('main-stylesheet', self.stylesheet)
 
     self._event_cache = []
 
