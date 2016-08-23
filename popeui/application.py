@@ -47,15 +47,17 @@ class Application(object):
 
     self.register('init', lambda evt, interface: self._load_view('default'))
 
-  def start(self):
+  def start(self, on_exit_callback=None):
     """
     Start the PopeUI application by initializing all registered services and starting an Autobahn IOLoop.
+
+    :param on_exit_callback: Callback triggered on application exit
     """
     # TODO: Support params for services by mapping {servicename: {class, params}}?
     for service in self.services.keys():
       self.services[service] = self.services[service]()
 
-    self.server.start()
+    self.server.start(on_exit_callback)
 
   def register(self, event, callback, selector=None):
     """
