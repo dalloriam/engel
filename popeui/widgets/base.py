@@ -79,8 +79,6 @@ class BaseElement(object):
     self.autoclosing = False
     self.content = ""
 
-    self.build()
-
     if parent is not None:
       parent.add_child(self)
 
@@ -104,13 +102,6 @@ class BaseElement(object):
 
     if self.view and self.view.is_loaded:
       self.view.dispatch({'name': 'removeclass', 'selector': '#' + self.id, 'cl': classname})
-
-  def build(self):
-    """
-    This method is called between the initialization of the widget and its binding to a view.
-    Add here any procedure required to take place before binding to a view (Ex: add child widgets).
-    """
-    pass
 
   def _get_html_tag(self):
     return self.html_tag
