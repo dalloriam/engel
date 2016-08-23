@@ -1,8 +1,7 @@
 import sys
 sys.path.append('../popeui')
 
-from popeui.widgets.structure import Panel
-from popeui.widgets.text import Span
+from popeui.widgets import Panel, Span
 
 
 class FakeDispatchView(object):
