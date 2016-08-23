@@ -44,7 +44,6 @@ In this example, we will build a web front-end to a text file. Exciting, right?
 * Display all lines of a text file.
 
 ```python
-#!/usr/local/bin/python3
 from popeui.application import Application, View
 
 from popeui.widgets.structure import List
@@ -109,7 +108,7 @@ class MainFileView(View):
     # Note: The framework handles seamlessly the forwarding of events from the
     # client to the server, so we can set a server-side method as callback
     # for a client event.
-    self.on(event="click", callback=self.create_line, selector="#" + btn.attributes['id'])
+    self.on(event="click", callback=self.create_line, selector="#" + btn.id)
 
   def append_line(self, ln):
     self.lines_list.append(Span(id="line_" + str(self.current_id), text=ln))
@@ -122,7 +121,7 @@ class MainFileView(View):
 
     # Note: The framework also handles the updating of client widgets from the server. This means
     # that the HTML view is guaranteed to always be in sync with your python objects.
-    self.txtNew.set_text("")
+    self.txtNew.text = ""
 
 
 class FileApp(Application):
@@ -157,8 +156,6 @@ To start the app, simply run
 ```shell
 $ python [appfilename].py
 ```
-
-and browse to `http://localhost:8080/index` to test your app:
 
 ![App running](http://i.imgur.com/9U9sYEZ.png)
 
