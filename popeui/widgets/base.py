@@ -50,7 +50,7 @@ class BaseElement(object):
   @classname.setter
   def classname(self, value):
     if value:
-      self._attributes['class'] = value.split(' ')
+      self._attributes['class'] = value
     elif 'class' in self._attributes:
       del self._attributes['class']
 
