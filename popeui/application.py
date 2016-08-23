@@ -159,7 +159,7 @@ class View(object):
     if not self.is_loaded:
       self._event_cache.append({'event': event, 'callback': asyncio.coroutine(callback), 'selector': selector})
     else:
-      self.context.register(event, callback, selector)
+      self.context.register(event, asyncio.coroutine(callback), selector)
 
   def dispatch(self, command):
     """
