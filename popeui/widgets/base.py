@@ -23,13 +23,15 @@ class BaseElement(object):
 
     self.attributes["id"] = id
 
-    if classname:
-      self.attributes["class"] = classname
-
     self.view = None
     """
     Instance of :class:`~.application.View` in which this widget was declared.
     """
+
+    self._classes = []
+
+    if classname:
+      self.add_class(classname)
 
     self.autoclosing = False
     self.content = ""
@@ -38,6 +40,24 @@ class BaseElement(object):
 
     if parent is not None:
       parent.add_child(self)
+
+  def set_attribute(self, name, value):
+    self.attributes[name] = value
+
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({'name': 'attr', 'selector': '#' + self.attributes['id'], 'attr': name, 'value': value})
+
+  def add_class(self, classname):
+    self._classes.append(classname)
+
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({'name': 'addclass', 'selector': '#' + self.attributes['id'], 'cl': classname})
+
+  def remove_class(self, classname):
+    self._classes.remove(classname)
+
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({'name': 'removeclass', 'selector': '#' + self.attributes['id'], 'cl': classname})
 
   def build(self):
     """
@@ -63,6 +83,11 @@ class BaseElement(object):
     return "".join([' {0}="{1}"'.format(x, self.attributes[x])for x in self.attributes.keys()])
 
   def _generate_html(self):
+    if self._classes:
+      self.attributes['class'] = ' '.join(self._classes)
+    elif 'class' in self.attributes:
+      del self.attributes['class']
+
     if self.autoclosing:
       return "<{0}{1}>".format(self._get_html_tag(), self._format_attributes())
     else:
@@ -98,6 +123,13 @@ class BaseContainer(BaseElement):
     List of objects inheriting :class:`BaseElement`.
     """
 
+  def __setattr__(self, name, value):
+    super(BaseContainer, self).__setattr__(name, value)
+    if name == 'parent' and value is not None:
+      for child in self.children:
+        child.view = self.view
+
+
   def add_child(self, child):
     """
     Add a new child element to this widget.
@@ -129,31 +161,22 @@ class BaseContainer(BaseElement):
         'selector': '#' + child.attributes['id']
       })
 
-  def get_element_by_id(self, id):
-    """
-    Find a child widget by its ID.
+  def replace_child(self, old_child, new_child):
 
-    :param id: ID of the widget to find.
-    :returns: Object inheriting :class:`BaseElement`
-    """
-    if self.attributes["id"] == id:
-      return self
-    else:
-      results = map(self.get_element_by_id(id), filter(lambda x: hasattr("get_element_by_id", x), self.children))
-      for result in results:
-        if result:
-          return result
+    for i, child in enumerate(self.children):
+      if child is old_child:
+        old_child.parent = None
+        new_child.parent = self
+        self.children[i] = new_child
 
-  def get_children_by_classname(self, classname):
-    """
-    .. note::
-      This method is not recursive (yet). It only searches in the immediate children of the widget.
+        if self.view and self.view.is_loaded:
+          self.view.dispatch({
+            'name': 'replace',
+            'selector': '#' + old_child.attributes['id'],
+            'html': new_child.compile()
+          })
+        return
 
-    Find an immediate child widget by its HTML class
-    :param classname: HTML class of the widgets to find.
-    :returns: List of objects inheriting :class:`BaseElement`
-    """
-    return list(filter(lambda child: classname in child.attributes["class"], self.children))
 
   def compile(self):
     """

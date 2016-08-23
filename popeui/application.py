@@ -156,7 +156,10 @@ class View(object):
     :param callback: Callback function for when the event is received (Params: event, interface).
     :param selector: `(Optional)` CSS selector for the element(s) you want to monitor
     """
-    self._event_cache.append({'event': event, 'callback': asyncio.coroutine(callback), 'selector': selector})
+    if not self.is_loaded:
+      self._event_cache.append({'event': event, 'callback': asyncio.coroutine(callback), 'selector': selector})
+    else:
+      self.context.register(event, asyncio.coroutine(callback), selector)
 
   def dispatch(self, command):
     """
