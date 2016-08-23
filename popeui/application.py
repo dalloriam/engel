@@ -81,7 +81,7 @@ class Application(object):
 
   def dispatch(self, command):
     """
-    Method used for sending events to the client. Refer to ``popeui/client/popejs.js`` to see the events supported by the client.
+    Method used for sending events to the client. Refer to ``popeui/popejs.js`` to see the events supported by the client.
 
     :param command: Command dict to send to the client.
     """
@@ -111,7 +111,7 @@ class View(object):
 
   libraries = []
   """
-  Javascript libraries used by the view.
+  List of modules encapsulating the javascript libraries used by the view.
   """
 
   def __init__(self, context):
@@ -119,6 +119,7 @@ class View(object):
     Constructor of the view.
 
     :param context: Application instantiating the view.
+    :raises NotImplementedError: When ``View.title`` is not set.
     """
 
     if self.title is None:
@@ -146,22 +147,24 @@ class View(object):
 
   def build(self):
     """
-    Method building the layout of the view. Override this in your view subclass to define a layout.
+    Method building the layout of the view. Override this in your view subclass to define your view's layout.
     """
     raise NotImplementedError
 
   def on(self, event, callback, selector=None):
     """
-    Register an event during :meth:`~.application.View.build`. The events will be subscribed to once the page is loaded.
+    Wrapper around :meth:`~.application.Application.register`. If :meth:`~.application.View.on` is called, for instance, during :meth:`~.application.View.build`,
+    the event handlers will be enqueued and registered when the view is loaded. Similarly, if :meth:`~.application.View.on` is called once the view is loaded (for example, in a button callback),
+    the event handler will be registered immediately.
 
     :param event: Name of the event to monitor
     :param callback: Callback function for when the event is received (Params: event, interface).
     :param selector: `(Optional)` CSS selector for the element(s) you want to monitor
     """
-    if not self.is_loaded:
-      self._event_cache.append({'event': event, 'callback': asyncio.coroutine(callback), 'selector': selector})
-    else:
-      self.context.register(event, asyncio.coroutine(callback), selector)
+    cbk = asyncio.coroutine(callback)
+    self._event_cache.append({'event': event, 'callback': cbk, 'selector': selector})
+    if self.is_loaded:
+      self.context.register(event, cbk, selector)
 
   def dispatch(self, command):
     """
@@ -178,9 +181,15 @@ class View(object):
       self.context.register(evt['event'], evt['callback'], evt['selector'])
 
   def unload(self):
+    """
+    Overridable method called when a view is unloaded (either on view change or on application shutdown).
+    Handles by default the unregistering of all event handlers previously registered by
+    the view.
+    """
     self.is_loaded = False
     for evt in self._event_cache:
       self.context.unregister(evt['event'], evt['callback'], evt['selector'])
+    self._event_cache = {}
 
   def _render(self):
     PageTitle(id="_page-title", text=self.context.base_title.format(self.title), parent=self._head)

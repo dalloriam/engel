@@ -13,5 +13,6 @@ Documentation
    :maxdepth: 2
 
    install
+   howto/popeui
    support
    code_overview/popeui
