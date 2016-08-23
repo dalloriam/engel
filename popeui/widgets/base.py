@@ -41,6 +41,12 @@ class BaseElement(object):
     if parent is not None:
       parent.add_child(self)
 
+  def set_attribute(self, name, value):
+    self.attributes[name] = value
+
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({'name': 'attr', 'selector': '#' + self.attributes['id'], 'attr': name, 'value': value})
+
   def add_class(self, classname):
     self._classes.append(classname)
 
@@ -77,7 +83,11 @@ class BaseElement(object):
     return "".join([' {0}="{1}"'.format(x, self.attributes[x])for x in self.attributes.keys()])
 
   def _generate_html(self):
-    self.attributes['class'] = ' '.join(self._classes)
+    if self._classes:
+      self.attributes['class'] = ' '.join(self._classes)
+    elif 'class' in self.attributes:
+      del self.attributes['class']
+
     if self.autoclosing:
       return "<{0}{1}>".format(self._get_html_tag(), self._format_attributes())
     else:
