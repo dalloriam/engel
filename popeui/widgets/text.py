@@ -1,5 +1,7 @@
 from .base import BaseElement
 
+from ..utils import html_property
+
 
 class Title(BaseElement):
   """
@@ -56,15 +58,13 @@ class TextLink(BaseElement):
 
   html_tag = "a"
 
+  target = html_property('href')
+
   def __init__(self, id, text, url, classname=None, parent=None):
     """
     :param text: Text of the link
     :param url: Target URL
     """
-    self.url = url
     super(TextLink, self).__init__(id, classname, parent)
-
+    self.target = url
     self.content = text
-
-  def build(self):
-    self.attributes["href"] = self.url

@@ -8,6 +8,52 @@ class BaseElement(object):
   HTML tag of this widget.
   """
 
+  @property
+  def view(self):
+    return self._view
+
+  @view.setter
+  def view(self, value):
+    self._view = value
+
+    if value is not None:
+      self.on_view_attached()
+
+  @property
+  def parent(self):
+    return self._parent
+
+  @parent.setter
+  def parent(self, value):
+    self._set_parent(value)
+
+  def _set_parent(self, value):
+    self._parent = value
+
+    if value is not None:
+      self.view = value.view
+    else:
+      self.view = None
+
+  @property
+  def id(self):
+    return self._attributes['id']
+
+  @id.setter
+  def id(self, value):
+    return self._set_attribute('id', value)
+
+  @property
+  def classname(self):
+    return ' '.join(self._attributes['class'])
+
+  @classname.setter
+  def classname(self, value):
+    if value:
+      self._attributes['class'] = value.split(' ')
+    elif 'class' in self._attributes:
+      del self._attributes['class']
+
   def __init__(self, id, classname=None, parent=None):
     """
     Constructor of the base widget.
@@ -16,17 +62,14 @@ class BaseElement(object):
     :param classname: Class name of the widget Analogous to HTML classes, mostly used for styling. (``string``)
     :param parent: Parent widget (Subclass of :class:`BaseElement`)
     """
-    self.attributes = {}
-    """
-    Dictionary of HTML attributes for this widget. (Ex: ``{"class": "test1 test2"}``)
-    """
+    self._attributes = {}
 
-    self.attributes["id"] = id
-
-    self.view = None
+    self._view = None
     """
     Instance of :class:`~.application.View` in which this widget was declared.
     """
+
+    self.id = id
 
     self._classes = []
 
@@ -41,23 +84,26 @@ class BaseElement(object):
     if parent is not None:
       parent.add_child(self)
 
-  def set_attribute(self, name, value):
-    self.attributes[name] = value
+  def _set_attribute(self, name, value):
 
-    if self.view and self.view.is_loaded:
-      self.view.dispatch({'name': 'attr', 'selector': '#' + self.attributes['id'], 'attr': name, 'value': value})
+    if value is not None:
+      self._attributes[name] = value
+      if self.view and self.view.is_loaded:
+        self.view.dispatch({'name': 'attr', 'selector': '#' + self.id, 'attr': name, 'value': value})
 
   def add_class(self, classname):
     self._classes.append(classname)
+    self.classname = ' '.join(self._classes)
 
     if self.view and self.view.is_loaded:
-      self.view.dispatch({'name': 'addclass', 'selector': '#' + self.attributes['id'], 'cl': classname})
+      self.view.dispatch({'name': 'addclass', 'selector': '#' + self.id, 'cl': classname})
 
   def remove_class(self, classname):
     self._classes.remove(classname)
+    self.classname = ' '.join(self._classes)
 
     if self.view and self.view.is_loaded:
-      self.view.dispatch({'name': 'removeclass', 'selector': '#' + self.attributes['id'], 'cl': classname})
+      self.view.dispatch({'name': 'removeclass', 'selector': '#' + self.id, 'cl': classname})
 
   def build(self):
     """
@@ -69,25 +115,10 @@ class BaseElement(object):
   def _get_html_tag(self):
     return self.html_tag
 
-  def __setattr__(self, name, value):
-    super(BaseElement, self).__setattr__(name, value)
-    if name == 'parent' and value is not None:
-      self.view = self.parent.view
-    elif name == 'parent' and value is None:
-      self.view = None
-
-    elif name == 'view' and value is not None:
-      self.on_view_attached()
-
   def _format_attributes(self):
-    return "".join([' {0}="{1}"'.format(x, self.attributes[x])for x in self.attributes.keys()])
+    return "".join([' {0}="{1}"'.format(x, self._attributes[x])for x in self._attributes.keys()])
 
   def _generate_html(self):
-    if self._classes:
-      self.attributes['class'] = ' '.join(self._classes)
-    elif 'class' in self.attributes:
-      del self.attributes['class']
-
     if self.autoclosing:
       return "<{0}{1}>".format(self._get_html_tag(), self._format_attributes())
     else:
@@ -113,6 +144,13 @@ class BaseContainer(BaseElement):
   Base class common to all widgets that can contain other widgets.
   """
 
+  @BaseElement.parent.setter
+  def parent(self, value):
+    self._set_parent(value)
+    if value is not None:
+      for child in self.children:
+        child.view = self.view
+
   def __init__(self, id, classname=None, parent=None):
     """
     Constructor of the Base Container
@@ -122,12 +160,6 @@ class BaseContainer(BaseElement):
     """
     List of objects inheriting :class:`BaseElement`.
     """
-
-  def __setattr__(self, name, value):
-    super(BaseContainer, self).__setattr__(name, value)
-    if name == 'parent' and value is not None:
-      for child in self.children:
-        child.view = self.view
 
 
   def add_child(self, child):
@@ -143,7 +175,7 @@ class BaseContainer(BaseElement):
       self.view.dispatch({
         'name': 'append',
         'html': child.compile(),
-        'selector': '#' + str(self.attributes['id'])
+        'selector': '#' + str(self.id)
       })
 
   def remove_child(self, child):
@@ -158,7 +190,7 @@ class BaseContainer(BaseElement):
     if self.view and self.view.is_loaded:
       self.view.dispatch({
         'name': 'remove',
-        'selector': '#' + child.attributes['id']
+        'selector': '#' + child.id
       })
 
   def replace_child(self, old_child, new_child):
@@ -172,7 +204,7 @@ class BaseContainer(BaseElement):
         if self.view and self.view.is_loaded:
           self.view.dispatch({
             'name': 'replace',
-            'selector': '#' + old_child.attributes['id'],
+            'selector': '#' + old_child.id,
             'html': new_child.compile()
           })
         return

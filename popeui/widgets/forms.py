@@ -1,6 +1,7 @@
 import html
 
 from .base import BaseElement
+from ..utils import html_property
 
 
 class Button(BaseElement):
@@ -26,39 +27,31 @@ class TextBox(BaseElement):
   """
 
   html_tag = 'input'
+  
+  @property
+  def text(self):
+    return self._text
+  
+  @text.setter
+  def text(self, value):
+    self._text = html.escape(value)
+    if self.view and self.view.is_loaded:
+      self.view.dispatch({'name': 'text', 'selector': '#' + self.id, 'text': value})
+
+  input_type = html_property('type')
+  name = html_property('name')
+
 
   def __init__(self, id, name=None, classname=None, parent=None):
-    self.name = name
     super(TextBox, self).__init__(id, classname, parent)
-
-  def build(self):
-    self.text = ""
-    """
-    Contents of the textbox.
-    """
-
-    self.attributes["type"] = "text"
-
-    if self.name:
-      self.attributes["name"] = self.name
-
-  def set_text(self, text):
-    """
-    Sets the textbox text from the server & updates the client.
-
-    :param text: Text of the textbox
-    """
-    self.text = text
-    self.view.dispatch({'name': 'text', 'selector': '#' + self.attributes['id'], 'text': text})
+    self._text = ""
+    self.input_type = 'text'
+    self.name = name
 
   def on_view_attached(self):
     super(TextBox, self).on_view_attached()
-    self.view.on('change', self._set_text, '#' + str(self.attributes['id']))
 
-  def _set_text(self, event, interface):
-    self.text = event['event_object']['target']['value']
+    def text_changed_callback(event, interface):
+      self._text = html.escape(event['event_object']['target']['value'])
 
-  def __setattr__(self, name, value):
-    super(TextBox, self).__setattr__(name, value)
-    if name == 'text' and value:
-      self.__dict__[name] = html.escape(value)
+    self.view.on('change', text_changed_callback, '#' + self.id)

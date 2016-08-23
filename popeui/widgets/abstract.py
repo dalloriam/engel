@@ -6,6 +6,8 @@
 
 from .base import BaseElement
 
+from ..utils import html_property
+
 
 class HeadLink(BaseElement):
   """
@@ -15,18 +17,17 @@ class HeadLink(BaseElement):
 
   html_tag = "link"
 
+  path = html_property('href')
+  link_type = html_property('rel')
+
   def __init__(self, id, link_type, path, classname=None, parent=None):
     """
     :param link_type: Type of link (Ex: "stylesheet", "script")
     :param path: Path of the link's target
     """
+    super(HeadLink, self).__init__(id, classname, parent)
     self.path = path
     self.link_type = link_type
-    super(HeadLink, self).__init__(id, classname, parent)
-
-  def build(self):
-    self.attributes["href"] = self.path
-    self.attributes["rel"] = self.link_type
     self.autoclosing = True
 
 
@@ -53,12 +54,11 @@ class Script(BaseElement):
 
   html_tag = "script"
 
+  source = html_property('src')
+
   def __init__(self, id, js_path, classname=None, parent=None):
     """
     :param js_path: Javascript source code.
     """
-    self.js_path = js_path
     super(Script, self).__init__(id, classname, parent)
-
-  def build(self):
-    self.attributes['src'] = self.js_path
+    self.source = js_path

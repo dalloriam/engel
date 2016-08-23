@@ -129,5 +129,5 @@ def test_event_set_attr():
   child = Span(id='my-span', text='oki')
   child.view = verifier
 
-  child.set_attribute('hello', 'world')
+  child._set_attribute('hello', 'world')
   verifier.verify()

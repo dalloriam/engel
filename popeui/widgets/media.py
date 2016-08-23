@@ -1,5 +1,7 @@
 from .base import BaseElement, BaseContainer
 
+from ..utils import html_property
+
 
 class Image(BaseElement):
   """
@@ -8,28 +10,28 @@ class Image(BaseElement):
 
   html_tag = "img"
 
-  def __init__(self, id, img_url, classname=None, parent=None):
-    self.img_url = img_url
-    super(Image, self).__init__(id, classname, parent)
+  source = html_property('src')
 
-  def build(self):
-    self.attributes["src"] = self.img_url
+  def __init__(self, id, img_url, classname=None, parent=None):
+    super(Image, self).__init__(id, classname, parent)
+    self.source = img_url
 
 
 class Video(BaseElement):
   """
-  A simple video widget, set via ``Video.attributes`` to loop by default.
+  A simple video widget, set via ``Video.loop`` to loop by default.
   """
 
   html_tag = "video"
 
+  source = html_property('src')
+  loop = html_property('loop')
+
   def __init__(self, id, vid_url, classname=None, parent=None):
-    self.vid_url = vid_url
     super(Video, self).__init__(id, classname, parent)
 
-  def build(self):
-    self.attributes["src"] = self.vid_url
-    self.attributes["loop"] = "true"
+    self.source = vid_url
+    self.loop = 'true'
 
 
 class ImageLink(BaseContainer):
@@ -39,14 +41,12 @@ class ImageLink(BaseContainer):
 
   html_tag = "a"
 
-  def __init__(self, id, link, img_url, classname=None, parent=None):
-    self.link = link
-    self.img_url = img_url
-    super(ImageLink, self).__init__(id, classname, parent)
-    self.add_child(Image(self.attributes['id'] + '-img', self.img_url))
+  target = html_property('href')
 
-  def build(self):
-    self.attributes['href'] = self.link
+  def __init__(self, id, link, img_url, classname=None, parent=None):
+    super(ImageLink, self).__init__(id, classname, parent)
+    self.target = link
+    self.add_child(Image(self.id + '-img', img_url))
 
 
 class Audio(BaseElement):
@@ -56,9 +56,8 @@ class Audio(BaseElement):
 
   html_tag = "audio"
 
-  def __init__(self, id, audio_path, classname=None, parent=None):
-    self.audio_path = audio_path
-    super(Audio, self).__init__(id, classname, parent)
+  source = html_property('src')
 
-  def build(self):
-    self.attributes["src"] = self.audio_path
+  def __init__(self, id, audio_path, classname=None, parent=None):
+    super(Audio, self).__init__(id, classname, parent)
+    self.source = audio_path

@@ -73,7 +73,7 @@ class List(BaseContainer):
 
     :param widget: Object inheriting :class:`~.widgets.base.BaseElement`
     """
-    li_itm = _li(id=self.attributes["id"] + str(self._count))
+    li_itm = _li(id=self.id + str(self._count))
     li_itm.add_child(widget)
 
     self.add_child(li_itm)
@@ -102,7 +102,7 @@ class List(BaseContainer):
 
   def __setitem__(self, index, widget):
     old_li = self._items[index]
-    li_itm = _li(id=old_li[1].attributes['id'])
+    li_itm = _li(id=old_li[1].id)
     li_itm.add_child(widget)
 
     old_wid = self.children[index]
