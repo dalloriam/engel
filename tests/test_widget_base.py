@@ -120,12 +120,15 @@ def test_event_set_attr():
 
   expected = {
     'name': 'attr',
+    'selector': '#my-span',
     'attr': 'hello',
     'value': 'world'
   }
 
   verifier = FakeDispatchView(expected)
 
+  child = Span(id='my-span', text='oki')
+  child.view = verifier
 
-def test_events_without_views_raises_no_exceptions():
-  pass
+  child.set_attribute('hello', 'world')
+  verifier.verify()
