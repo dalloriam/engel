@@ -28,9 +28,9 @@ def test_bootstrap_imagecard():
 
 def test_bootstrap_card_columns():
   cc = bootstrap4.CardColumns(id="my")
-  assert cc.attributes['class'] == 'card-columns'
+  assert cc._classes == ['card-columns']
 
 
 def test_bootstrap_container():
   container = bootstrap4.Container(id="container")
-  assert container.attributes['class'] == 'container-fluid'
+  assert container._classes == ['container-fluid']

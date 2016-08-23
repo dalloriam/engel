@@ -23,7 +23,7 @@ def test_widget_headlink():
 def test_widget_pagetitle():
   title = PageTitle(id="h", text="title", classname="classy")
   assert title.attributes["id"] == "h"
-  assert title.attributes["class"] == "classy"
+  assert title._classes == ["classy"]
   assert title.content == "title"
   o = title.compile()
   assert ">title<" in o
