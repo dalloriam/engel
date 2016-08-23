@@ -101,13 +101,12 @@ class List(BaseContainer):
     return self._items[index][0]
 
   def __setitem__(self, index, widget):
-    li_itm = _li(id=self.attributes["id"] + str(self._count))
-    # TODO: This manually sets the view since the view is normally set by BaseContainer.add_child()
-    # Should investigate overriding the setters on the BaseContainer.children list instead.
-    li_itm.view = self.view
+    old_li = self._items[index]
+    li_itm = _li(id=old_li[1].attributes['id'])
     li_itm.add_child(widget)
 
-    self.children[index] = li_itm
+    old_wid = self.children[index]
+    self.replace_child(old_wid, li_itm)
     self._items[index] = (widget, li_itm)
 
 

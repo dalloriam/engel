@@ -21,11 +21,7 @@ function init() {
             load()
         }
         else if (command.name == "append") {
-            d3.selectAll(command.selector).append(function(){
-                var d = document.createElement('div');
-                d.innerHTML = command.html;
-                return d.firstChild;
-            });
+            $(command.selector).append(command.html)
         }
         else if (command.name == "script") {
             $.getScript(command.path, function(data, textStatus, jqxhr) {

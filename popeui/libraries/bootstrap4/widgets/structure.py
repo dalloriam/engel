@@ -9,8 +9,8 @@ class Container(Panel):
   containers instead of :class:`~.widgets.structure.Panel`.
   """
   def __init__(self, id, classname=None, parent=None):
-    classname = "container-fluid " + classname if classname else "container-fluid"
     super(Container, self).__init__(id=id, classname=classname, parent=parent)
+    self.add_class('container-fluid')
 
 
 class BaseCard(Container):
@@ -19,8 +19,8 @@ class BaseCard(Container):
   """
 
   def __init__(self, id, classname=None, parent=None):
-    classname = "card " + classname if classname else "card"
     super(BaseCard, self).__init__(id="card-" + id, classname=classname, parent=parent)
+    self.add_class('card')
 
 
 class ImageCard(BaseCard):
@@ -48,5 +48,5 @@ class CardColumns(Panel):
   Display card by columns. Views using the ``bootstrap4`` module should use CardColumns instead of :class:`~.widgets.structure.List` for item display.
   """
   def __init__(self, id, classname=None, parent=None):
-    classname = "card-columns" + classname if classname else "card-columns"
     super(CardColumns, self).__init__(id=id, classname=classname, parent=parent)
+    self.add_class('card-columns')
