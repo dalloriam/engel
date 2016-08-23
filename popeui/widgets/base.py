@@ -129,31 +129,22 @@ class BaseContainer(BaseElement):
         'selector': '#' + child.attributes['id']
       })
 
-  def get_element_by_id(self, id):
-    """
-    Find a child widget by its ID.
+  def replace_child(self, old_child, new_child):
 
-    :param id: ID of the widget to find.
-    :returns: Object inheriting :class:`BaseElement`
-    """
-    if self.attributes["id"] == id:
-      return self
-    else:
-      results = map(self.get_element_by_id(id), filter(lambda x: hasattr("get_element_by_id", x), self.children))
-      for result in results:
-        if result:
-          return result
+    for i, child in enumerate(self.children):
+      if child is old_child:
+        old_child.parent = None
+        new_child.parent = self
+        self.children[i] = new_child
 
-  def get_children_by_classname(self, classname):
-    """
-    .. note::
-      This method is not recursive (yet). It only searches in the immediate children of the widget.
+        if self.view and self.view.is_loaded:
+          self.view.dispatch({
+            'name': 'replace',
+            'selector': '#' + old_child.attributes['id'],
+            'html': new_child.compile()
+          })
+        return
 
-    Find an immediate child widget by its HTML class
-    :param classname: HTML class of the widgets to find.
-    :returns: List of objects inheriting :class:`BaseElement`
-    """
-    return list(filter(lambda child: classname in child.attributes["class"], self.children))
 
   def compile(self):
     """
