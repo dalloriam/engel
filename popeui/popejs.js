@@ -9,6 +9,10 @@ function init() {
         socket.send(JSON.stringify({ "event": "init" }))
     }
 
+    socket.onclose = function(event) {
+      alert("Oops! The application server has stopped!");
+    }
+
     socket.onmessage = function(event) {
         console.log("Received: " + event.data)
 
