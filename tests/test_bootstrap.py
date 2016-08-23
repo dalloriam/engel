@@ -1,8 +1,7 @@
 import sys
 sys.path.append('../popeui')
 
-from popeui.widgets.text import Title, Paragraph
-from popeui.widgets.media import Image
+from popeui.widgets import Title, Paragraph, Image
 
 from popeui.libraries import bootstrap4
 
