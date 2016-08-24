@@ -17,7 +17,7 @@ class HeadLink(BaseElement):
 
   html_tag = "link"
 
-  path = html_property('href')
+  target = html_property('href')
   link_type = html_property('rel')
 
   def __init__(self, id, link_type, path, classname=None, parent=None):
@@ -26,7 +26,7 @@ class HeadLink(BaseElement):
     :param path: Path of the link's target
     """
     super(HeadLink, self).__init__(id, classname, parent)
-    self.path = path
+    self.target = path
     self.link_type = link_type
     self.autoclosing = True
 

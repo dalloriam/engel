@@ -27,11 +27,11 @@ class TextBox(BaseElement):
   """
 
   html_tag = 'input'
-  
+
   @property
   def text(self):
     return self._text
-  
+
   @text.setter
   def text(self, value):
     self._text = html.escape(value)
@@ -40,7 +40,6 @@ class TextBox(BaseElement):
 
   input_type = html_property('type')
   name = html_property('name')
-
 
   def __init__(self, id, name=None, classname=None, parent=None):
     super(TextBox, self).__init__(id, classname, parent)
