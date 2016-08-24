@@ -118,6 +118,10 @@ class BaseElement(object):
       return "<{0}{1}>{2}</{0}>".format(self._get_html_tag(), self._format_attributes(), self.content)
 
   def build(self, **kwargs):
+    """
+    Gets called before the widget gets attached to a view. Override this
+    to define your widget's specific traits.
+    """
     pass
 
   def compile(self):
@@ -130,7 +134,7 @@ class BaseElement(object):
 
   def on_view_attached(self):
     """
-    Gets triggered when the widget gets attached to a view.
+    Gets called when the widget gets attached to a view.
     """
     pass
 

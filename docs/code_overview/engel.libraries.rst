@@ -1,7 +1,7 @@
 Engel-Supported Libraries
 ==========================
 
-To use Engel supported libraries, simply import them and use them in your views.
+To use Engel-supported libraries, simply import them and use them in your views.
 
 .. code-block:: python
 

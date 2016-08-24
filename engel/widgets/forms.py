@@ -19,17 +19,15 @@ class Button(BaseElement):
 class TextBox(BaseElement):
   """
   A simple textbox.
-
-  **Default Events**:
-
-  ``OnChange`` (client-side)
-    Updates the python object to match the client textbox value.
   """
 
   html_tag = 'input'
 
   @property
   def text(self):
+    """
+    Text content of the TextBox
+    """
     return self._text
 
   @text.setter
@@ -39,7 +37,13 @@ class TextBox(BaseElement):
       self.view.dispatch({'name': 'text', 'selector': '#' + self.id, 'text': value})
 
   input_type = html_property('type')
+  """
+  Type of the ``<input>`` tag. (defaults to "text")
+  """
   name = html_property('name')
+  """
+  Name of the data bound to the textbox. (Optional, used with forms.)
+  """
 
   def build(self, name=None):
     super(TextBox, self).build()

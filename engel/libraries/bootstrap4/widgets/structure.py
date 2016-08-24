@@ -28,12 +28,12 @@ class ImageCard(BaseCard):
   """
 
   def build(self, title, text, img_url):
-    super(ImageCard, self).build()
     """
     :param title: Title of the card
     :param text: Description of the card
     :param img_url: Image of the card
     """
+    super(ImageCard, self).build()
     self.title = Title(id=self.id + "-title", text=title, classname="card-title", size=3, parent=self)
 
     self.block = Panel(id=self.id + "-block", classname="card-block", parent=self)

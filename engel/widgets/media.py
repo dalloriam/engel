@@ -11,6 +11,9 @@ class Image(BaseElement):
   html_tag = "img"
 
   source = html_property('src')
+  """
+  Path of the image file
+  """
 
   def build(self, img_url):
     super(Image, self).build()
@@ -25,7 +28,13 @@ class Video(BaseElement):
   html_tag = "video"
 
   source = html_property('src')
+  """
+  Path of the video file
+  """
   loop = html_property('loop')
+  """
+  Loop the video? ("true" / "false") (defaults to ``"true"``)
+  """
 
   def build(self, vid_url):
     super(Video, self).build()
@@ -41,6 +50,9 @@ class ImageLink(BaseContainer):
   html_tag = "a"
 
   target = html_property('href')
+  """
+  Target of the link
+  """
 
   def build(self, link, img_url):
     super(ImageLink, self).build()
@@ -56,6 +68,9 @@ class Audio(BaseElement):
   html_tag = "audio"
 
   source = html_property('src')
+  """
+  Path of the audio file
+  """
 
   def build(self, audio_path):
     super(Audio, self).build()

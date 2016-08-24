@@ -18,7 +18,14 @@ class HeadLink(BaseElement):
   html_tag = "link"
 
   target = html_property('href')
+  """
+  File to which the HeadLink is pointing
+  """
+
   link_type = html_property('rel')
+  """
+  Link type (Ex: stylesheet)
+  """
 
   def build(self, link_type, path):
     super(HeadLink, self).build()
@@ -55,6 +62,9 @@ class Script(BaseElement):
   html_tag = "script"
 
   source = html_property('src')
+  """
+  Location of the script
+  """
 
   def build(self, js_path):
     super(Script, self).build()

@@ -59,6 +59,9 @@ class TextLink(BaseElement):
   html_tag = "a"
 
   target = html_property('href')
+  """
+  Target of the link
+  """
 
   def build(self, text, url):
     """
