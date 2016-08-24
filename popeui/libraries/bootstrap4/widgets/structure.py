@@ -9,14 +9,16 @@ class Container(Panel):
   containers instead of :class:`~.widgets.structure.Panel`.
   """
   def build(self):
+    super(Container, self).build()
     self.add_class('container-fluid')
 
 
-class BaseCard(Container):
+class BaseCard(Panel):
   """
   Empty Bootstrap Card.
   """
   def build(self):
+    super(BaseCard, self).build()
     self.add_class('card')
 
 
@@ -26,6 +28,7 @@ class ImageCard(BaseCard):
   """
 
   def build(self, title, text, img_url):
+    super(ImageCard, self).build()
     """
     :param title: Title of the card
     :param text: Description of the card
@@ -44,4 +47,5 @@ class CardColumns(Panel):
   Display card by columns. Views using the ``bootstrap4`` module should use CardColumns instead of :class:`~.widgets.structure.List` for item display.
   """
   def build(self):
+    super(CardColumns, self).build()
     self.add_class('card-columns')

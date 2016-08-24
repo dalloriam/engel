@@ -12,6 +12,7 @@ class Button(BaseElement):
   html_tag = "button"
 
   def build(self, text):
+    super(Button, self).build()
     self.content = text
 
 
@@ -41,6 +42,7 @@ class TextBox(BaseElement):
   name = html_property('name')
 
   def build(self, name=None):
+    super(TextBox, self).build()
     self._text = ""
     self.input_type = 'text'
 

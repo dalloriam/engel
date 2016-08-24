@@ -21,6 +21,7 @@ class HeadLink(BaseElement):
   link_type = html_property('rel')
 
   def build(self, link_type, path):
+    super(HeadLink, self).build()
     """
     :param link_type: Link type
     :param target: Link target
@@ -39,6 +40,7 @@ class PageTitle(BaseElement):
   html_tag = "title"
 
   def build(self, text):
+    super(PageTitle, self).build()
     """
     :param text: Page title
     """
@@ -55,6 +57,7 @@ class Script(BaseElement):
   source = html_property('src')
 
   def build(self, js_path):
+    super(Script, self).build()
     """
     :param js_path: Javascript source code.
     """

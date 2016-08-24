@@ -13,6 +13,7 @@ class Title(BaseElement):
     :param text: Text of the widget
     :param size: Size of the text (Higher size = smaller title)
     """
+    super(Title, self).build()
     self.content = text
     self.size = size
 
@@ -31,6 +32,7 @@ class Paragraph(BaseElement):
     """
     :param text: Content of the paragraph
     """
+    super(Paragraph, self).build()
     self.content = text
 
 
@@ -45,6 +47,7 @@ class Span(BaseElement):
     """
     :param text: Content of the span
     """
+    super(Span, self).build()
     self.content = text
 
 
@@ -62,5 +65,6 @@ class TextLink(BaseElement):
     :param text: Text of the link
     :param url: Target URL
     """
+    super(TextLink, self).build()
     self.target = url
     self.content = text
