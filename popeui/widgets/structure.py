@@ -94,6 +94,9 @@ class List(BaseContainer):
     else:
       raise ValueError("Child not in list.")
 
+  def __iter__(self):
+    return iter(list([x[0] for x in self._items]))
+
   def __len__(self):
     return len(self._items)
 
