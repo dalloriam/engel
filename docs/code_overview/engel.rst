@@ -6,13 +6,13 @@ Subpackages
 
 .. toctree::
 
-    popeui.widgets
-    popeui.libraries
+    engel.widgets
+    engel.libraries
 
-PopeUI Application Classes
+Engel Application Classes
 --------------------------
 
-.. automodule:: popeui.application
+.. automodule:: engel.application
     :members:
     :undoc-members:
     :special-members: __init__

@@ -1,9 +1,9 @@
 import sys
-sys.path.append('../popeui')
+sys.path.append('../engel')
 
-from popeui.widgets import Title, Paragraph, Image
+from engel.widgets import Title, Paragraph, Image
 
-from popeui.libraries import bootstrap4
+from engel.libraries import bootstrap4
 
 
 def test_bootstrap_has_stylesheet():

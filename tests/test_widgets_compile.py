@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../popeui')
+sys.path.append('../engel')
 
-from popeui.widgets import *
+from engel.widgets import *
 
 
 # ABSTRACT WIDGETS

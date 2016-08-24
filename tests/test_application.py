@@ -1,8 +1,8 @@
 import sys
-sys.path.append('../popeui')
+sys.path.append('../engel')
 
-from popeui.application import Application, View
-from popeui.widgets.structure import Document, Body
+from engel.application import Application, View
+from engel.widgets.structure import Document, Body
 
 
 class AppNoBaseTitle(Application):

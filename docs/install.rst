@@ -5,12 +5,12 @@ Via pip
 -------
 .. code-block:: bash
 
-  pip install popeui
+  pip install engel
 
 Manually
 --------
 .. code-block:: bash
 
-  git clone https://github.com/Dalloriam/popeui
-  cd popeui
+  git clone https://github.com/Dalloriam/engel
+  cd engel
   python setup.py install

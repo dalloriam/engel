@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../popeui')
+sys.path.append('../engel')
 
-from popeui.widgets import Panel, Span
+from engel.widgets import Panel, Span
 
 
 class FakeDispatchView(object):

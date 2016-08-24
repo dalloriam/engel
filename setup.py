@@ -3,7 +3,7 @@ import re, os
 
 
 version = ''
-with open('popeui/__init__.py') as f:
+with open('engel/__init__.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 if not version:
@@ -14,22 +14,22 @@ readme = ''
 with open('README.md') as f:
     readme = f.read()
 
-setup(name='popeui',
+setup(name='engel',
       author='Dalloriam',
       author_email='dalloriam@gmail.com',
-      url='https://github.com/Dalloriam/popeui',
+      url='https://github.com/Dalloriam/engel',
       version=version,
       packages=find_packages(),
       license='MIT',
-      description='Build miraculous web interfaces for your projects.',
+      description='Build rock-solid web interfaces for your projects.',
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
       long_description=readme,
-      package_data={'': ['index.html', 'popejs.js'], 'popegen': ['templates/*']},
+      package_data={'engel': ['index.html', 'queenside.js'], 'eng': ['templates/*']},
       include_package_data=True,
       entry_points={
         'console_scripts': [
-          'pope=popegen.generate_code:main'
+          'eng=eng.generate_code:main'
         ]
       },
       install_requires=[

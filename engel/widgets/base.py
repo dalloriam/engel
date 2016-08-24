@@ -1,6 +1,6 @@
 class BaseElement(object):
   """
-  Base class common to all PopeUI widgets.
+  Base class common to all Engel widgets.
   """
 
   html_tag = None

@@ -1,7 +1,7 @@
-Building a PopeUI Application
+Building an Engel Application
 =============================
 
-This section will cover the creation of a basic PopeUI application that will display the headlines from Reddit using
+This section will cover the creation of a basic Engel application that will display the headlines from Reddit using
 PRAW_.
 
 .. _PRAW: https://github.com/praw-dev/praw/
@@ -16,17 +16,17 @@ Let's begin by installing PRAW.
 Generating the project files
 ----------------------------
 
-Once PRAW is installed, let's use PopeUI's build-in code generator to generate the basic skeleton of our application.
+Once PRAW is installed, let's use Engel's built-in code generator to generate the basic skeleton of our application.
 
 .. code-block:: shell
 
-  $ pope new popereddit
+  $ eng new engelreddit
 
 This will generate the following structure:
 
 .. code-block:: text
 
-  popereddit/                   - main app directory
+  engelreddit/                  - main app directory
   ├── app.py                    - application entry point
   ├── views/                    - views package
   │   ├── home.py               - Default home view
@@ -48,7 +48,7 @@ look like:
   class RedditService(object):
 
     def __init__(self):
-      self.agent = praw.Reddit(user_agent='popereddit')
+      self.agent = praw.Reddit(user_agent='engelreddit')
 
     def get_sub(self, subreddit):
       return [str(x) for x in self.agent.get_subreddit(subreddit).get_hot(limit=50)]
@@ -62,25 +62,25 @@ Next, let's edit ``app.py`` so it is up-to-date with our service.
 
 .. code-block:: python
 
-  from popeui import Application
+  from engel import Application
 
   from views.home import HomeView
   from services.reddit import RedditService
 
 
-  class popereddit(Application):
+  class engelreddit(Application):
 
-    base_title = "{0} | popereddit"
+    base_title = "{0} | engelreddit"
 
     def __init__(self, debug=False):
-      super(popereddit, self).__init__(debug)
+      super(engelreddit, self).__init__(debug)
 
       self.views['default'] = HomeView
 
       self.services['reddit'] = RedditService
 
   if __name__ == '__main__':
-    app = popereddit(debug=True)
+    app = engelreddit(debug=True)
     app.start()
 
 When the app starts, the framework instantiates all services defined in ``Application.services`` and first builds the view corresponding
@@ -101,10 +101,10 @@ With that in mind, let's define our layout in ``/views/home.py``.
 
 .. code-block:: python
 
-  from popeui import View
+  from engel import View
 
-  from popeui.libraries import bootstrap4
-  from popeui.widgets import TextBox, Button
+  from engel.libraries import bootstrap4
+  from engel.widgets import TextBox, Button
 
   from copy import copy
 
@@ -144,5 +144,5 @@ With that in mind, let's define our layout in ``/views/home.py``.
             parent=self.results
           )
 
-You now have a fully functional PopeUI application!
-If you want more information on the framework's API, head over to the :doc:`../code_overview/popeui`. Otherwise, take a look at :doc:`popeui.widget`.
+You now have a fully functional Engel application!
+If you want more information on the framework's API, head over to the :doc:`../code_overview/engel`. Otherwise, take a look at :doc:`engel.widget`.

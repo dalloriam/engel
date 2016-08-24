@@ -1,11 +1,11 @@
-PopeUI-Supported Libraries
+Engel-Supported Libraries
 ==========================
 
-To use PopeUI supported libraries, simply import them and use them in your views.
+To use Engel supported libraries, simply import them and use them in your views.
 
 .. code-block:: python
 
-  from popeui.libraries import bootstrap4
+  from engel.libraries import bootstrap4
 
   class MainView(View):
     title = "MyView"
@@ -27,7 +27,7 @@ Bootstrap 4 (Alpha)
 Widgets
 ~~~~~~~
 
-.. automodule:: popeui.libraries.bootstrap4.widgets.structure
+.. automodule:: engel.libraries.bootstrap4.widgets.structure
     :members:
     :undoc-members:
     :show-inheritance:

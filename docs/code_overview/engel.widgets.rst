@@ -1,10 +1,10 @@
-PopeUI Widgets
+Engel Widgets
 ==============
 
 Abstract Widgets
 ----------------
 
-.. automodule:: popeui.widgets.abstract
+.. automodule:: engel.widgets.abstract
     :members:
     :undoc-members:
     :special-members: __init__
@@ -13,7 +13,7 @@ Abstract Widgets
 Base Widgets
 ------------
 
-.. automodule:: popeui.widgets.base
+.. automodule:: engel.widgets.base
     :members:
     :special-members: __init__
     :undoc-members:
@@ -22,7 +22,7 @@ Base Widgets
 Form-related Widgets
 --------------------
 
-.. automodule:: popeui.widgets.forms
+.. automodule:: engel.widgets.forms
     :members:
     :undoc-members:
     :show-inheritance:
@@ -30,7 +30,7 @@ Form-related Widgets
 Media Widgets
 -------------
 
-.. automodule:: popeui.widgets.media
+.. automodule:: engel.widgets.media
     :members:
     :undoc-members:
     :show-inheritance:
@@ -38,7 +38,7 @@ Media Widgets
 Structural Widgets
 ------------------
 
-.. automodule:: popeui.widgets.structure
+.. automodule:: engel.widgets.structure
     :members:
     :special-members: __init__
     :undoc-members:
@@ -47,7 +47,7 @@ Structural Widgets
 Text Widgets
 --------------------------
 
-.. automodule:: popeui.widgets.text
+.. automodule:: engel.widgets.text
     :members:
     :special-members: __init__
     :undoc-members:

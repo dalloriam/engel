@@ -1,5 +1,5 @@
 """
-Contains all the classes and functions related to the structure of a PopeUI application.
+Contains all the classes and functions related to the structure of an Engel application.
 """
 import logging
 import asyncio
@@ -12,7 +12,7 @@ from .widgets.abstract import PageTitle
 
 class Application(object):
   """
-  The ``Application`` abstract class represents the entirety of a PopeUI application.
+  The ``Application`` abstract class represents the entirety of an Engel application.
 
   Your application should inherit from this class and redefine the specifics, like Views, Services,
   and any additional logic required by your project.
@@ -49,7 +49,7 @@ class Application(object):
 
   def start(self, on_exit_callback=None):
     """
-    Start the PopeUI application by initializing all registered services and starting an Autobahn IOLoop.
+    Start the Engel application by initializing all registered services and starting an Autobahn IOLoop.
 
     :param on_exit_callback: Callback triggered on application exit
     """
@@ -81,7 +81,7 @@ class Application(object):
 
   def dispatch(self, command):
     """
-    Method used for sending events to the client. Refer to ``popeui/popejs.js`` to see the events supported by the client.
+    Method used for sending events to the client. Refer to ``engel/engeljs.js`` to see the events supported by the client.
 
     :param command: Command dict to send to the client.
     """
@@ -126,8 +126,8 @@ class View(object):
       raise NotImplementedError
 
     self.is_loaded = False
-    self._doc_root = Document(id="popeui-main", view=self)
-    self._head = Head(id="popeui-head", parent=self._doc_root)
+    self._doc_root = Document(id="engel-main", view=self)
+    self._head = Head(id="engel-head", parent=self._doc_root)
     self.root = Body(id="main-body", parent=self._doc_root)
     self.context = context
 
