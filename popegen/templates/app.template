@@ -1,0 +1,21 @@
+from popeui import Application
+
+from views.home import HomeView
+from services.home import HomeService
+
+
+class {0}(Application):
+
+  base_title = "{{0}} | {0}"
+
+  def __init__(self, debug=False):
+    super({0}, self).__init__(debug)
+
+    self.views['default'] = HomeView
+
+    self.services['homeSvc'] = HomeService
+
+
+if __name__ == "__main__":
+  app = {0}(debug=False)
+  app.start()

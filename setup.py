@@ -25,8 +25,13 @@ setup(name='popeui',
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
       long_description=readme,
-      package_data={'': ['index.html', 'popejs.js']},
+      package_data={'': ['index.html', 'popejs.js'], 'popegen': ['templates/*']},
       include_package_data=True,
+      entry_points={
+        'console_scripts': [
+          'pope=popegen.generate_code:main'
+        ]
+      },
       install_requires=[
         "autobahn==0.13.0",
         "requests==2.10.0",

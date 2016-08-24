@@ -1,0 +1,9 @@
+from popeui import View
+
+
+class {0}(View):
+
+  title = "{0}"
+
+  def build(self):
+    pass
