@@ -18,7 +18,7 @@ def test_bootstrap_has_scripts():
 
 def test_bootstrap_imagecard():
   imgcard = bootstrap4.ImageCard(id="testID", title="title", text="text", img_url="img_url")
-  assert imgcard.id == 'card-testID'
+  assert imgcard.id == 'testID'
 
   assert isinstance(imgcard.title, Title)
   assert isinstance(imgcard.image, Image)

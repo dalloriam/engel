@@ -9,11 +9,11 @@ class Document(BaseContainer):
 
   html_tag = "html"
 
-  def __init__(self, id, view, classname=None, parent=None):
+  def __init__(self, id, view, classname=None, parent=None, **kwargs):
     """
     :param view: :class:`~.application.View` in which the document is declared.
     """
-    super(Document, self).__init__(id, classname, parent)
+    super(Document, self).__init__(id, classname, parent, **kwargs)
     self.view = view
 
 
@@ -62,8 +62,8 @@ class List(BaseContainer):
 
   html_tag = "ul"
 
-  def __init__(self, id, classname=None, parent=None):
-    super(List, self).__init__(id, classname, parent)
+  def __init__(self, id, classname=None, parent=None, **kwargs):
+    super(List, self).__init__(id, classname, parent, **kwargs)
     self._count = 0
     self._items = []
 

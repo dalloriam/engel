@@ -20,12 +20,11 @@ class HeadLink(BaseElement):
   target = html_property('href')
   link_type = html_property('rel')
 
-  def __init__(self, id, link_type, path, classname=None, parent=None):
+  def build(self, link_type, path):
     """
-    :param link_type: Type of link (Ex: "stylesheet", "script")
-    :param path: Path of the link's target
+    :param link_type: Link type
+    :param target: Link target
     """
-    super(HeadLink, self).__init__(id, classname, parent)
     self.target = path
     self.link_type = link_type
     self.autoclosing = True
@@ -39,11 +38,10 @@ class PageTitle(BaseElement):
 
   html_tag = "title"
 
-  def __init__(self, id, text, classname=None, parent=None):
+  def build(self, text):
     """
-    :param text: Title of the page.
+    :param text: Page title
     """
-    super(PageTitle, self).__init__(id, classname, parent)
     self.content = text
 
 
@@ -56,9 +54,8 @@ class Script(BaseElement):
 
   source = html_property('src')
 
-  def __init__(self, id, js_path, classname=None, parent=None):
+  def build(self, js_path):
     """
     :param js_path: Javascript source code.
     """
-    super(Script, self).__init__(id, classname, parent)
     self.source = js_path

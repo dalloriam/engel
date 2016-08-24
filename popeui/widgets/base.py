@@ -54,7 +54,7 @@ class BaseElement(object):
     elif 'class' in self._attributes:
       del self._attributes['class']
 
-  def __init__(self, id, classname=None, parent=None):
+  def __init__(self, id, classname=None, parent=None, **kwargs):
     """
     Constructor of the base widget.
 
@@ -78,6 +78,8 @@ class BaseElement(object):
 
     self.autoclosing = False
     self.content = ""
+
+    self.build(**kwargs)
 
     if parent is not None:
       parent.add_child(self)
@@ -115,6 +117,9 @@ class BaseElement(object):
     else:
       return "<{0}{1}>{2}</{0}>".format(self._get_html_tag(), self._format_attributes(), self.content)
 
+  def build(self, **kwargs):
+    pass
+
   def compile(self):
     """
     Generate the HTML representing this widget.
@@ -142,12 +147,12 @@ class BaseContainer(BaseElement):
       for child in self.children:
         child.view = self.view
 
-  def __init__(self, id, classname=None, parent=None):
+  def __init__(self, id, classname=None, parent=None, **kwargs):
     """
     Constructor of the Base Container
     """
     self.children = []
-    super(BaseContainer, self).__init__(id, classname, parent)
+    super(BaseContainer, self).__init__(id, classname, parent, **kwargs)
     """
     List of objects inheriting :class:`BaseElement`.
     """

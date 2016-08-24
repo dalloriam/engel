@@ -11,8 +11,7 @@ class Button(BaseElement):
 
   html_tag = "button"
 
-  def __init__(self, id, text, classname=None, parent=None):
-    super(Button, self).__init__(id, classname, parent)
+  def build(self, text):
     self.content = text
 
 
@@ -41,11 +40,12 @@ class TextBox(BaseElement):
   input_type = html_property('type')
   name = html_property('name')
 
-  def __init__(self, id, name=None, classname=None, parent=None):
-    super(TextBox, self).__init__(id, classname, parent)
+  def build(self, name=None):
     self._text = ""
     self.input_type = 'text'
-    self.name = name
+
+    if name:
+      self.name = name
 
   def on_view_attached(self):
     super(TextBox, self).on_view_attached()
