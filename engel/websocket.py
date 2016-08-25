@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import logging
 import asyncio
@@ -92,7 +93,7 @@ class EventProtocol(WebSocketServerProtocol):
 
   def onClose(self, wasClean, code, reason):
     logging.info("WebSocket connection closed: {}".format(reason))
-    exit(0)
+    sys.exit(0)
 
 
 class EventServer(object):
