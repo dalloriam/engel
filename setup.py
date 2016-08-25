@@ -25,7 +25,7 @@ setup(name='engel',
       setup_requires=['pytest-runner'],
       tests_require=['pytest'],
       long_description=readme,
-      package_data={'engel': ['index.html', 'queenside.js'], 'eng': ['templates/*']},
+      package_data={'engel': ['index.html', 'engeljs.js'], 'eng': ['templates/*']},
       include_package_data=True,
       entry_points={
         'console_scripts': [
