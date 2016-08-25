@@ -9,11 +9,11 @@ class Document(BaseContainer):
 
   html_tag = "html"
 
-  def __init__(self, id, view, classname=None, parent=None):
+  def __init__(self, id, view, classname=None, parent=None, **kwargs):
     """
     :param view: :class:`~.application.View` in which the document is declared.
     """
-    super(Document, self).__init__(id, classname, parent)
+    super(Document, self).__init__(id, classname, parent, **kwargs)
     self.view = view
 
 
@@ -62,8 +62,8 @@ class List(BaseContainer):
 
   html_tag = "ul"
 
-  def __init__(self, id, classname=None, parent=None):
-    super(List, self).__init__(id, classname, parent)
+  def __init__(self, id, classname=None, parent=None, **kwargs):
+    super(List, self).__init__(id, classname, parent, **kwargs)
     self._count = 0
     self._items = []
 
@@ -73,7 +73,7 @@ class List(BaseContainer):
 
     :param widget: Object inheriting :class:`~.widgets.base.BaseElement`
     """
-    li_itm = _li(id=self.attributes["id"] + str(self._count))
+    li_itm = _li(id=self.id + str(self._count))
     li_itm.add_child(widget)
 
     self.add_child(li_itm)
@@ -94,6 +94,9 @@ class List(BaseContainer):
     else:
       raise ValueError("Child not in list.")
 
+  def __iter__(self):
+    return iter(list([x[0] for x in self._items]))
+
   def __len__(self):
     return len(self._items)
 
@@ -101,13 +104,12 @@ class List(BaseContainer):
     return self._items[index][0]
 
   def __setitem__(self, index, widget):
-    li_itm = _li(id=self.attributes["id"] + str(self._count))
-    # TODO: This manually sets the view since the view is normally set by BaseContainer.add_child()
-    # Should investigate overriding the setters on the BaseContainer.children list instead.
-    li_itm.view = self.view
+    old_li = self._items[index]
+    li_itm = _li(id=old_li[1].id)
     li_itm.add_child(widget)
 
-    self.children[index] = li_itm
+    old_wid = self.children[index]
+    self.replace_child(old_wid, li_itm)
     self._items[index] = (widget, li_itm)
 
 

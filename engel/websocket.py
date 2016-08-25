@@ -113,7 +113,7 @@ class EventServer(object):
     self.loop = asyncio.get_event_loop()
     self.server = self.loop.create_server(factory, '0.0.0.0', port)
 
-  def start(self):
+  def start(self, callback=None):
     self.loop.run_until_complete(self.server)
 
     try:
@@ -127,3 +127,6 @@ class EventServer(object):
     finally:
       self.server.close()
       self.loop.close()
+
+      if callback is not None and callable(callback):
+        callback()

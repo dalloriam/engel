@@ -9,6 +9,10 @@ function init() {
         socket.send(JSON.stringify({ "event": "init" }))
     }
 
+    socket.onclose = function(event) {
+      alert("Oops! The application server has stopped!");
+    }
+
     socket.onmessage = function(event) {
         console.log("Received: " + event.data)
 
@@ -21,11 +25,7 @@ function init() {
             load()
         }
         else if (command.name == "append") {
-            d3.selectAll(command.selector).append(function(){
-                var d = document.createElement('div');
-                d.innerHTML = command.html;
-                return d.firstChild;
-            });
+            $(command.selector).append(command.html)
         }
         else if (command.name == "script") {
             $.getScript(command.path, function(data, textStatus, jqxhr) {

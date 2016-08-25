@@ -1,10 +1,10 @@
-# PopeUI
+# Engel
 
-[![PyPI](https://img.shields.io/pypi/v/popeui.svg?maxAge=2592000)](https://pypi.python.org/pypi/popeui) [![PyPI](https://img.shields.io/pypi/l/popeui.svg?maxAge=2592000)](https://pypi.python.org/pypi/popeui) [![PyPI](https://img.shields.io/pypi/dm/popeui.svg?maxAge=2592000)](https://pypi.python.org/pypi/popeui) [![Code Climate](https://codeclimate.com/github/Dalloriam/popeui/badges/gpa.svg)](https://codeclimate.com/github/Dalloriam/popeui)
+[![PyPI](https://img.shields.io/pypi/v/engel.svg)](https://pypi.python.org/pypi/engel) [![PyPI](https://img.shields.io/pypi/l/engel.svg)](https://pypi.python.org/pypi/engel) [![PyPI](https://img.shields.io/pypi/dm/engel.svg)](https://pypi.python.org/pypi/engel) [![Code Climate](https://codeclimate.com/github/Dalloriam/engel/badges/gpa.svg)](https://codeclimate.com/github/Dalloriam/engel)
 
-PopeUI is an opinionated framework that allows you to painlessly build cross-platform web interfaces for your projects.
+Engel is an opinionated framework that allows you to painlessly build cross-platform web interfaces for your projects.
 
-Take a look at the [documentation](http://popeui.readthedocs.io/en/latest/index.html) for more details.
+Take a look at the [documentation](http://engel.readthedocs.io/en/latest/index.html) for more details.
 
 
 
@@ -13,14 +13,14 @@ Take a look at the [documentation](http://popeui.readthedocs.io/en/latest/index.
 ### Via `pip`
 
 ```shell
-$ pip install popeui
+$ pip install engel
 ```
 
 ### Manually
 
 ```shell
-$ git clone https://github.com/Dalloriam/popeui
-$ cd popeui
+$ git clone https://github.com/Dalloriam/engel
+$ cd engel
 $ python setup.py install
 ```
 
@@ -34,7 +34,7 @@ $ python setup.py test
 
 
 
-## Building a basic web interface with PopeUI
+## Building a basic web interface with Engel
 
 In this example, we will build a web front-end to a text file. Exciting, right?
 
@@ -44,20 +44,19 @@ In this example, we will build a web front-end to a text file. Exciting, right?
 * Display all lines of a text file.
 
 ```python
-#!/usr/local/bin/python3
-from popeui.application import Application, View
+from engel.application import Application, View
 
-from popeui.widgets.structure import List
-from popeui.widgets.forms import Button, TextBox
-from popeui.widgets.text import Title, Span
+from engel.widgets.structure import List
+from engel.widgets.forms import Button, TextBox
+from engel.widgets.text import Title, Span
 
-from popeui.libraries import bootstrap4
+from engel.libraries import bootstrap4
 
 import os
 
 
 class FileService(object):
-  """Services are the main way of interacting with the outside world with PopeUI.
+  """Services are the main way of interacting with the outside world with Engel.
   This service encapsulates all interactions with our file, and will be made
   available to our application.
   """
@@ -75,7 +74,7 @@ class FileService(object):
 
 
 class MainFileView(View):
-  """With PopeUI, views represent the structure of the page currently displayed
+  """With Engel, views represent the structure of the page currently displayed
   as well as the different actions handled by the program.
   """
   title = "MyFile.txt"
@@ -95,7 +94,7 @@ class MainFileView(View):
 
     # Here, we define a List() object. Contrary to Container(), List() is more than
     # a simple wrapper around <ul>. The List object provides an interface very similar to python's list,
-    # and at the same time provides the auto-updating capabilities of PopeUI widgets.
+    # and at the same time provides the auto-updating capabilities of Engel widgets.
     self.lines_list = List(id="lstLines", parent=main_panel)
 
     # We get the list of active services from the view's context & call the
@@ -109,7 +108,7 @@ class MainFileView(View):
     # Note: The framework handles seamlessly the forwarding of events from the
     # client to the server, so we can set a server-side method as callback
     # for a client event.
-    self.on(event="click", callback=self.create_line, selector="#" + btn.attributes['id'])
+    self.on(event="click", callback=self.create_line, selector="#" + btn.id)
 
   def append_line(self, ln):
     self.lines_list.append(Span(id="line_" + str(self.current_id), text=ln))
@@ -122,11 +121,11 @@ class MainFileView(View):
 
     # Note: The framework also handles the updating of client widgets from the server. This means
     # that the HTML view is guaranteed to always be in sync with your python objects.
-    self.txtNew.set_text("")
+    self.txtNew.text = ""
 
 
 class FileApp(Application):
-  """The Application object is the central object tying your PopeUI app together.
+  """The Application object is the central object tying your Engel app together.
   It holds all the information common to all views, as well as view and service
   definitions.
   """
@@ -157,8 +156,6 @@ To start the app, simply run
 ```shell
 $ python [appfilename].py
 ```
-
-and browse to `http://localhost:8080/index` to test your app:
 
 ![App running](http://i.imgur.com/9U9sYEZ.png)
 

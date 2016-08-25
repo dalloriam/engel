@@ -1,17 +1,19 @@
 from .base import BaseElement
 
+from ..utils import html_property
+
 
 class Title(BaseElement):
   """
   Title widget analogous to the HTML <h{n}> elements.
   """
 
-  def __init__(self, id, text, classname=None, parent=None, size=1):
+  def build(self, text, size=1):
     """
     :param text: Text of the widget
     :param size: Size of the text (Higher size = smaller title)
     """
-    super(Title, self).__init__(id, classname, parent)
+    super(Title, self).build()
     self.content = text
     self.size = size
 
@@ -26,11 +28,11 @@ class Paragraph(BaseElement):
 
   html_tag = "p"
 
-  def __init__(self, id, text, classname=None, parent=None):
+  def build(self, text):
     """
     :param text: Content of the paragraph
     """
-    super(Paragraph, self).__init__(id, classname, parent)
+    super(Paragraph, self).build()
     self.content = text
 
 
@@ -41,11 +43,11 @@ class Span(BaseElement):
 
   html_tag = "span"
 
-  def __init__(self, id, text, classname=None, parent=None):
+  def build(self, text):
     """
     :param text: Content of the span
     """
-    super(Span, self).__init__(id, classname, parent)
+    super(Span, self).build()
     self.content = text
 
 
@@ -56,15 +58,16 @@ class TextLink(BaseElement):
 
   html_tag = "a"
 
-  def __init__(self, id, text, url, classname=None, parent=None):
+  target = html_property('href')
+  """
+  Target of the link
+  """
+
+  def build(self, text, url):
     """
     :param text: Text of the link
     :param url: Target URL
     """
-    self.url = url
-    super(TextLink, self).__init__(id, classname, parent)
-
+    super(TextLink, self).build()
+    self.target = url
     self.content = text
-
-  def build(self):
-    self.attributes["href"] = self.url

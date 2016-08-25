@@ -1,5 +1,5 @@
 """
-Contains all the classes and functions related to the structure of a PopeUI application.
+Contains all the classes and functions related to the structure of an Engel application.
 """
 import logging
 import asyncio
@@ -12,7 +12,7 @@ from .widgets.abstract import PageTitle
 
 class Application(object):
   """
-  The ``Application`` abstract class represents the entirety of a PopeUI application.
+  The ``Application`` abstract class represents the entirety of an Engel application.
 
   Your application should inherit from this class and redefine the specifics, like Views, Services,
   and any additional logic required by your project.
@@ -47,15 +47,17 @@ class Application(object):
 
     self.register('init', lambda evt, interface: self._load_view('default'))
 
-  def start(self):
+  def start(self, on_exit_callback=None):
     """
-    Start the PopeUI application by initializing all registered services and starting an Autobahn IOLoop.
+    Start the Engel application by initializing all registered services and starting an Autobahn IOLoop.
+
+    :param on_exit_callback: Callback triggered on application exit
     """
     # TODO: Support params for services by mapping {servicename: {class, params}}?
     for service in self.services.keys():
       self.services[service] = self.services[service]()
 
-    self.server.start()
+    self.server.start(on_exit_callback)
 
   def register(self, event, callback, selector=None):
     """
@@ -79,7 +81,7 @@ class Application(object):
 
   def dispatch(self, command):
     """
-    Method used for sending events to the client. Refer to ``popeui/client/popejs.js`` to see the events supported by the client.
+    Method used for sending events to the client. Refer to ``engel/engeljs.js`` to see the events supported by the client.
 
     :param command: Command dict to send to the client.
     """
@@ -109,7 +111,7 @@ class View(object):
 
   libraries = []
   """
-  Javascript libraries used by the view.
+  List of modules encapsulating the javascript libraries used by the view.
   """
 
   def __init__(self, context):
@@ -117,14 +119,15 @@ class View(object):
     Constructor of the view.
 
     :param context: Application instantiating the view.
+    :raises NotImplementedError: When ``View.title`` is not set.
     """
 
     if self.title is None:
       raise NotImplementedError
 
     self.is_loaded = False
-    self._doc_root = Document(id="popeui-main", view=self)
-    self._head = Head(id="popeui-head", parent=self._doc_root)
+    self._doc_root = Document(id="engel-main", view=self)
+    self._head = Head(id="engel-head", parent=self._doc_root)
     self.root = Body(id="main-body", parent=self._doc_root)
     self.context = context
 
@@ -144,19 +147,24 @@ class View(object):
 
   def build(self):
     """
-    Method building the layout of the view. Override this in your view subclass to define a layout.
+    Method building the layout of the view. Override this in your view subclass to define your view's layout.
     """
     raise NotImplementedError
 
   def on(self, event, callback, selector=None):
     """
-    Register an event during :meth:`~.application.View.build`. The events will be subscribed to once the page is loaded.
+    Wrapper around :meth:`~.application.Application.register`. If :meth:`~.application.View.on` is called, for instance, during :meth:`~.application.View.build`,
+    the event handlers will be enqueued and registered when the view is loaded. Similarly, if :meth:`~.application.View.on` is called once the view is loaded (for example, in a button callback),
+    the event handler will be registered immediately.
 
     :param event: Name of the event to monitor
     :param callback: Callback function for when the event is received (Params: event, interface).
     :param selector: `(Optional)` CSS selector for the element(s) you want to monitor
     """
-    self._event_cache.append({'event': event, 'callback': asyncio.coroutine(callback), 'selector': selector})
+    cbk = asyncio.coroutine(callback)
+    self._event_cache.append({'event': event, 'callback': cbk, 'selector': selector})
+    if self.is_loaded:
+      self.context.register(event, cbk, selector)
 
   def dispatch(self, command):
     """
@@ -173,9 +181,15 @@ class View(object):
       self.context.register(evt['event'], evt['callback'], evt['selector'])
 
   def unload(self):
+    """
+    Overridable method called when a view is unloaded (either on view change or on application shutdown).
+    Handles by default the unregistering of all event handlers previously registered by
+    the view.
+    """
     self.is_loaded = False
     for evt in self._event_cache:
       self.context.unregister(evt['event'], evt['callback'], evt['selector'])
+    self._event_cache = {}
 
   def _render(self):
     PageTitle(id="_page-title", text=self.context.base_title.format(self.title), parent=self._head)

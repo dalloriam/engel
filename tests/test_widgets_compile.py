@@ -1,11 +1,7 @@
 import sys
-sys.path.append('../popeui')
+sys.path.append('../engel')
 
-from popeui.widgets.abstract import *
-from popeui.widgets.forms import *
-from popeui.widgets.media import *
-from popeui.widgets.structure import *
-from popeui.widgets.text import *
+from engel.widgets import *
 
 
 # ABSTRACT WIDGETS
@@ -22,8 +18,8 @@ def test_widget_headlink():
 
 def test_widget_pagetitle():
   title = PageTitle(id="h", text="title", classname="classy")
-  assert title.attributes["id"] == "h"
-  assert title.attributes["class"] == "classy"
+  assert title.id == "h"
+  assert title._classes == ["classy"]
   assert title.content == "title"
   o = title.compile()
   assert ">title<" in o
@@ -31,7 +27,7 @@ def test_widget_pagetitle():
 
 def test_widget_script():
   scr = Script(id="scr", js_path="/Users/wduss/test.js")
-  assert scr.attributes['src'] == "/Users/wduss/test.js"
+  assert scr.source == "/Users/wduss/test.js"
 
 
 # FORMS WIDGETS
@@ -42,30 +38,31 @@ def test_widget_button():
 
 def test_widget_textbox():
   txt1 = TextBox(id="txtTest")
-  assert "name" not in txt1.attributes
+  assert "name" not in txt1._attributes
 
   txt2 = TextBox(id="txtTest", name="name")
-  assert "name" in txt2.attributes
+  assert "name" in txt2._attributes
+  assert txt2.name == 'name'
 
 
 # MEDIA WIDGETS
 def test_widget_image():
   img = Image(id="img", img_url="http://www.google.ca")
   assert img.html_tag == "img"
-  assert img.attributes["src"] == "http://www.google.ca"
+  assert img.source == "http://www.google.ca"
 
 
 def test_widget_video():
   vid = Video(id="myvid", vid_url="hello")
-  assert vid.attributes["src"] == "hello"
-  assert vid.attributes["loop"] == "true"
+  assert vid.source == "hello"
+  assert vid.loop == "true"
 
 
 def test_widget_imagelink():
   imgl = ImageLink(id="yao", link="http://www.google.ca", img_url="http://wikipedia.org")
   assert imgl.html_tag == "a"
 
-  assert imgl.attributes["href"] == "http://www.google.ca"
+  assert imgl.target == "http://www.google.ca"
 
   assert len(imgl.children) == 1
   assert isinstance(imgl.children[0], Image)
@@ -73,7 +70,7 @@ def test_widget_imagelink():
 
 def test_widget_audio():
   aud = Audio(id="aud", audio_path="test.mp3")
-  assert aud.attributes["src"] == "test.mp3"
+  assert aud.source == "test.mp3"
 
 
 # STRUCTURE WIDGETS
@@ -183,5 +180,5 @@ def test_widget_textlink():
   t = TextLink(id="id", text="abcd", url="http://www.google.ca")
   assert t.html_tag == "a"
   assert t.content == "abcd"
-  assert "href" in t.attributes
-  assert t.attributes["href"] == "http://www.google.ca"
+  assert "href" in t._attributes
+  assert t.target == "http://www.google.ca"

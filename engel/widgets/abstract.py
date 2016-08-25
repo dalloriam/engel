@@ -6,6 +6,8 @@
 
 from .base import BaseElement
 
+from ..utils import html_property
+
 
 class HeadLink(BaseElement):
   """
@@ -15,18 +17,24 @@ class HeadLink(BaseElement):
 
   html_tag = "link"
 
-  def __init__(self, id, link_type, path, classname=None, parent=None):
-    """
-    :param link_type: Type of link (Ex: "stylesheet", "script")
-    :param path: Path of the link's target
-    """
-    self.path = path
-    self.link_type = link_type
-    super(HeadLink, self).__init__(id, classname, parent)
+  target = html_property('href')
+  """
+  File to which the HeadLink is pointing
+  """
 
-  def build(self):
-    self.attributes["href"] = self.path
-    self.attributes["rel"] = self.link_type
+  link_type = html_property('rel')
+  """
+  Link type (Ex: stylesheet)
+  """
+
+  def build(self, link_type, path):
+    super(HeadLink, self).build()
+    """
+    :param link_type: Link type
+    :param target: Link target
+    """
+    self.target = path
+    self.link_type = link_type
     self.autoclosing = True
 
 
@@ -38,11 +46,11 @@ class PageTitle(BaseElement):
 
   html_tag = "title"
 
-  def __init__(self, id, text, classname=None, parent=None):
+  def build(self, text):
+    super(PageTitle, self).build()
     """
-    :param text: Title of the page.
+    :param text: Page title
     """
-    super(PageTitle, self).__init__(id, classname, parent)
     self.content = text
 
 
@@ -53,12 +61,14 @@ class Script(BaseElement):
 
   html_tag = "script"
 
-  def __init__(self, id, js_path, classname=None, parent=None):
+  source = html_property('src')
+  """
+  Location of the script
+  """
+
+  def build(self, js_path):
+    super(Script, self).build()
     """
     :param js_path: Javascript source code.
     """
-    self.js_path = js_path
-    super(Script, self).__init__(id, classname, parent)
-
-  def build(self):
-    self.attributes['src'] = self.js_path
+    self.source = js_path

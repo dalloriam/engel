@@ -1,10 +1,9 @@
 import sys
-sys.path.append('../popeui')
+sys.path.append('../engel')
 
-from popeui.widgets.text import Title, Paragraph
-from popeui.widgets.media import Image
+from engel.widgets import Title, Paragraph, Image
 
-from popeui.libraries import bootstrap4
+from engel.libraries import bootstrap4
 
 
 def test_bootstrap_has_stylesheet():
@@ -19,7 +18,7 @@ def test_bootstrap_has_scripts():
 
 def test_bootstrap_imagecard():
   imgcard = bootstrap4.ImageCard(id="testID", title="title", text="text", img_url="img_url")
-  assert imgcard.attributes['id'] == 'card-testID'
+  assert imgcard.id == 'testID'
 
   assert isinstance(imgcard.title, Title)
   assert isinstance(imgcard.image, Image)
@@ -28,9 +27,9 @@ def test_bootstrap_imagecard():
 
 def test_bootstrap_card_columns():
   cc = bootstrap4.CardColumns(id="my")
-  assert cc.attributes['class'] == 'card-columns'
+  assert cc._classes == ['card-columns']
 
 
 def test_bootstrap_container():
   container = bootstrap4.Container(id="container")
-  assert container.attributes['class'] == 'container-fluid'
+  assert container._classes == ['container-fluid']
