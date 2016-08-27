@@ -3,3 +3,4 @@ autobahn==0.13.0
 asyncio==3.4.3
 sphinx
 sphinx-rtd-theme
+pytest

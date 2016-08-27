@@ -69,6 +69,8 @@ class BaseElement(object):
     Instance of :class:`~.application.View` in which this widget was declared.
     """
 
+    self._parent = None
+
     self.id = id
 
     self._classes = []
