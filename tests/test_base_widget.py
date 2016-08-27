@@ -159,3 +159,16 @@ def test_base_element_attribute_dispatches_when_view_exists():
   b_elem.view = view
   b_elem._set_attribute('hello', 'world')
   view.verify()
+
+def test_base_element_property_id():
+  b_elem = BaseElement(id='id')
+  assert b_elem.id == 'id', 'BaseElement.id should return the value of internal BaseElement._attributes["id"]'
+
+def test_base_element_property_id_setter():
+  b_elem = BaseElement(id='id')
+  b_elem.id = 'id2'
+  assert b_elem.id == 'id2', 'BaseElement.id should set the value of BaseElement._attributes["id"]'
+
+def test_base_element_property_classname_getter():
+  b_elem = BaseElement(id='hello', classname="hello")
+  assert b_elem.classname == "hello"
