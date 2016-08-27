@@ -45,7 +45,7 @@ class BaseElement(object):
 
   @property
   def classname(self):
-    return ' '.join(self._attributes['class'])
+    return self._attributes['class']
 
   @classname.setter
   def classname(self, value):
