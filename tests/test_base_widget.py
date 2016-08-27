@@ -4,6 +4,25 @@ sys.path.append('../engel')
 from engel.widgets.base import BaseElement
 
 
+class FakeDispatchView(object):
+  """
+  This fake view aims to help the testing of event dispatchers.
+  """
+
+  def __init__(self, expected_command):
+    self.expected_command = expected_command
+    self.is_loaded = True
+
+    self.was_dispatched = False
+
+  def dispatch(self, cmd):
+    self.was_dispatched = True
+    assert self.expected_command == cmd
+
+  def verify(self):
+    assert self.was_dispatched
+
+
 class BuildTriggerWidget(BaseElement):
 
   def build(self):
@@ -123,4 +142,20 @@ def test_base_element_property_parent_setter_sets_view():
   b_elem.parent = fake_parent
   assert b_elem.view == 3, "BaseElement.parent should set the value of BaseElement.view to the parent's view"
 
-# TODO: Test SetAttributes()
+def test_base_element_sets_attributes():
+  b_elem = BaseElement(id='id')
+  b_elem._set_attribute('hello', 'there')
+  assert b_elem._attributes.get('hello') == 'there', "BaseElement._set_attribute should set the specified attribute in BaseElement._attributes"
+
+def test_base_element_doesnt_set_attribute_when_none():
+  b_elem = BaseElement(id='id')
+  b_elem._set_attribute('hello', None)
+  assert 'hello' not in b_elem._attributes, 'BaseElement._set_attribute should do nothing when attribute value is None'
+
+def test_base_element_attribute_dispatches_when_view_exists():
+  view = FakeDispatchView({'name': 'attr', 'selector': '#id', 'attr': 'hello', 'value': 'world'})
+
+  b_elem = BaseElement(id='id')
+  b_elem.view = view
+  b_elem._set_attribute('hello', 'world')
+  view.verify()
