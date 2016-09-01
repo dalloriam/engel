@@ -163,7 +163,6 @@ class BaseContainer(BaseElement):
     List of objects inheriting :class:`BaseElement`.
     """
 
-
   def add_child(self, child):
     """
     Add a new child element to this widget.
@@ -210,7 +209,6 @@ class BaseContainer(BaseElement):
             'html': new_child.compile()
           })
         return
-
 
   def compile(self):
     """
