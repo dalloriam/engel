@@ -1,4 +1,4 @@
-# Engel
+![Engel](http://i.imgur.com/pc32vxY.jpg)
 
 [![PyPI](https://img.shields.io/pypi/v/engel.svg)](https://pypi.python.org/pypi/engel) [![PyPI](https://img.shields.io/pypi/l/engel.svg)](https://pypi.python.org/pypi/engel) [![PyPI](https://img.shields.io/pypi/dm/engel.svg)](https://pypi.python.org/pypi/engel) [![Code Climate](https://codeclimate.com/github/Dalloriam/engel/badges/gpa.svg)](https://codeclimate.com/github/Dalloriam/engel)
 
