@@ -1,14 +1,20 @@
 import sys
-from utils import FakeDispatchView
+import pytest
+from tests.utils import FakeDispatchView
 
 sys.path.append('../engel')
 
 from engel.widgets.base import BaseContainer, BaseElement
 
 
-def test_widget_base_container_has_children_array():
-  b_cont = BaseContainer(id='id')
-  assert hasattr(b_cont, 'children')
+class TestBaseContainerStructure():
+
+  @pytest.fixture(scope='module')
+  def container(self):
+    return BaseContainer(id='id')
+
+  def test_widget_base_container_has_children_array(self, container):
+    assert hasattr(container, 'children')
 
 
 def test_widget_base_container_property_parent_setter():
@@ -75,3 +81,51 @@ def test_widget_base_container_remove_child_unsets_parent():
   assert b_elem.parent is fake_parent
   fake_parent.remove_child(b_elem)
   assert b_elem.parent is None, "BaseContainer.remove_child should reset the child's parent to None."
+
+
+def test_widget_base_container_remove_child_dispatches_remove():
+  view_test = FakeDispatchView({'name': 'remove', 'selector': '#id'})
+  fake_parent = BaseContainer(id='id')
+
+  b_elem = BaseElement(id='id')
+
+  fake_parent.add_child(b_elem)
+  fake_parent.view = view_test
+  fake_parent.remove_child(b_elem)
+  view_test.verify()
+
+
+def test_widget_base_container_replace_child_replaces_child():
+  fake_parent = BaseContainer(id='id')
+
+  b_elem_1 = BaseElement(id='id1', parent=fake_parent)
+  b_elem_2 = BaseElement(id='id2')
+
+  fake_parent.replace_child(b_elem_1, b_elem_2)
+
+  assert len(fake_parent.children) == 1 and fake_parent.children[0] is b_elem_2, 'BaseContainer.replace_child() should replace the child in BaseContainer.children.'
+
+
+def test_widget_base_container_replace_child_handles_parents():
+  fake_parent = BaseContainer(id='id')
+
+  b_elem_1 = BaseElement(id='id1', parent=fake_parent)
+  b_elem_2 = BaseElement(id='id2')
+
+  fake_parent.replace_child(b_elem_1, b_elem_2)
+
+  assert b_elem_1.parent is None, "BaseContainer.replace_child() should unset the old child's parent."
+  assert b_elem_2.parent is fake_parent, "BaseContainer.replace_child() should set the new child's parent."
+
+
+def test_widget_base_container_compile_compiles_children():
+  fake_parent = BaseContainer(id='id')
+  fake_parent.html_tag = 'a'
+
+  b_elem_1 = BaseElement(id='id1', parent=fake_parent)
+  b_elem_2 = BaseElement(id='id2', parent=fake_parent)
+
+  b_elem_1.html_tag = 'b'
+  b_elem_2.html_tag = 'c'
+
+  assert fake_parent.compile() == '<a id="id"><b id="id1"></b><c id="id2"></c></a>'

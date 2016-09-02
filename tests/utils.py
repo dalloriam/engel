@@ -1,6 +1,6 @@
 class FakeDispatchView(object):
   """
-  This fake view aims to help the testing of event dispatchers.
+  DEPCRECATED: This fake view aims to help the testing of event dispatchers.
   """
 
   def __init__(self, expected_command):
@@ -15,3 +15,20 @@ class FakeDispatchView(object):
 
   def verify(self):
     assert self.was_dispatched
+
+
+class DispatchInterceptorView(object):
+  """
+  This fake view aims to help the testing of event dispatchers.
+  """
+
+  def __init__(self):
+    self.is_loaded = True
+    self.received_commands = []
+    self.received_events = []
+
+  def dispatch(self, cmd):
+    self.received_commands.append(cmd)
+
+  def on(self, evt, callback, selector):
+    self.received_events.append((evt, callback, selector))

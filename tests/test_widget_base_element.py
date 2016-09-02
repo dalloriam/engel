@@ -1,5 +1,6 @@
 import sys
-from utils import FakeDispatchView
+import pytest
+from tests.utils import FakeDispatchView
 
 sys.path.append('../engel')
 
@@ -30,64 +31,47 @@ class ViewWidget(BaseElement):
     self._attributes['VIEWATTACH'] = True
 
 
-def test_widget_base_element_has_attributes():
-  b_elem = BaseElement(id='id')
-  assert hasattr(b_elem, '_attributes'), 'BaseElement constructor must define an internal _attributes dictionary.'
+class TestBaseElementStructure():
 
+  @pytest.fixture(scope="class")
+  def element(self):
+    return BaseElement(id='id')
 
-def test_widget_base_element_attributes_is_dict():
-  b_elem = BaseElement(id='id')
-  assert isinstance(b_elem._attributes, dict), 'BaseElement._attributes must be a dictionary.'
+  def test_widget_base_element_has_attributes(self, element):
+    assert hasattr(element, '_attributes'), 'BaseElement constructor must define an internal _attributes dictionary.'
 
+  def test_widget_base_element_attributes_is_dict(self, element):
+    assert isinstance(element._attributes, dict), 'BaseElement._attributes must be a dictionary.'
 
-def test_widget_base_element_has_view():
-  b_elem = BaseElement(id='id')
-  assert hasattr(b_elem, '_view'), 'BaseElement constructor must define _view.'
+  def test_widget_base_element_has_view(self, element):
+    assert hasattr(element, '_view'), 'BaseElement constructor must define _view.'
 
+  def test_widget_base_element_view_defaults_to_none(self, element):
+    assert element._view is None, 'BaseElement._view should default to None when no parent specified.'
 
-def test_widget_base_element_view_defaults_to_none():
-  b_elem = BaseElement(id='id')
-  assert b_elem._view is None, 'BaseElement._view should default to None when no parent specified.'
+  def test_widget_base_element_has_parent(self, element):
+    assert hasattr(element, '_parent'), 'BaseElement constructor must define _parent.'
 
+  def test_widget_base_element_parent_defaults_to_none(self, element):
+    assert element._parent is None, 'BaseElement._parent should default to None when no parent specified.'
 
-def test_widget_base_element_has_parent():
-  b_elem = BaseElement(id='id')
-  assert hasattr(b_elem, '_parent'), 'BaseElement constructor must define _parent.'
+  def test_widget_base_element_has_class_list(self, element):
+    assert hasattr(element, '_classes'), 'BaseElement constructor must define an internal "_classes" list.'
 
+  def test_widget_base_element_classes_default_to_empty(self, element):
+    assert element._classes == [], 'BaseElement._list should default to an empty list.'
 
-def test_widget_base_element_parent_defaults_to_none():
-  b_elem = BaseElement(id='id')
-  assert b_elem._parent is None, 'BaseElement._parent should default to None when no parent specified.'
+  def test_widget_base_element_has_autoclosing(self, element):
+    assert hasattr(element, 'autoclosing'), 'BaseElement constructor must define the autoclosing attribute.'
 
+  def test_widget_base_element_autoclosing_defaults_to_false(self, element):
+    assert element.autoclosing is False, 'BaseElement.autoclosing should default to False'
 
-def test_widget_base_element_has_class_list():
-  b_elem = BaseElement(id='id')
-  assert hasattr(b_elem, '_classes'), 'BaseElement constructor must define an internal "_classes" list.'
+  def test_widget_base_element_has_content(self, element):
+    assert hasattr(element, 'content'), 'BaseElement constructor must define the "content" attribute.'
 
-
-def test_widget_base_element_classes_default_to_empty():
-  b_elem = BaseElement(id='id')
-  assert b_elem._classes == [], 'BaseElement._list should default to an empty list.'
-
-
-def test_widget_base_element_has_autoclosing():
-  b_elem = BaseElement(id='id')
-  assert hasattr(b_elem, 'autoclosing'), 'BaseElement constructor must define the autoclosing attribute.'
-
-
-def test_widget_base_element_autoclosing_defaults_to_false():
-  b_elem = BaseElement(id='id')
-  assert b_elem.autoclosing is False, 'BaseElement.autoclosing should default to False'
-
-
-def test_widget_base_element_has_content():
-  b_elem = BaseElement(id='id')
-  assert hasattr(b_elem, 'content'), 'BaseElement constructor must define the "content" attribute.'
-
-
-def test_widget_base_element_content_is_empty_string():
-  b_elem = BaseElement(id='id')
-  assert b_elem.content == "", 'BaseElement.content should default to an empty string.'
+  def test_widget_base_element_content_is_empty_string(self, element):
+    assert element.content == "", 'BaseElement.content should default to an empty string.'
 
 
 def test_widget_base_element_build_method_gets_called():
