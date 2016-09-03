@@ -45,7 +45,7 @@ class BaseElement(object):
 
   @property
   def classname(self):
-    return ' '.join(self._attributes['class'])
+    return self._attributes['class']
 
   @classname.setter
   def classname(self, value):
@@ -68,6 +68,8 @@ class BaseElement(object):
     """
     Instance of :class:`~.application.View` in which this widget was declared.
     """
+
+    self._parent = None
 
     self.id = id
 
@@ -161,7 +163,6 @@ class BaseContainer(BaseElement):
     List of objects inheriting :class:`BaseElement`.
     """
 
-
   def add_child(self, child):
     """
     Add a new child element to this widget.
@@ -208,7 +209,6 @@ class BaseContainer(BaseElement):
             'html': new_child.compile()
           })
         return
-
 
   def compile(self):
     """

@@ -1,113 +1,55 @@
 import sys
+import pytest
 sys.path.append('../engel')
 
-from engel.application import Application, View
-from engel.widgets.structure import Document, Body
+from engel.application import Application
+
+from engel.websocket import EventProcessor, EventServer
 
 
-class AppNoBaseTitle(Application):
+class TestApplicationStructure():
 
-  def heh(self):
-    pass
+  @pytest.fixture(scope="class")
+  def app_no_base(self):
+    class MyApp(Application):
+      pass
 
+    return MyApp
 
-class AppBaseTitle(Application):
-  base_title = "{0}"
+  @pytest.fixture(scope="class")
+  def app_base(self):
+    class MyApp(Application):
+      base_title = "{0} | Base"
 
+    return MyApp()
 
-class NoNameView(View):
+  def test_application_raises_when_no_base_title(self, app_no_base):
+    with pytest.raises(NotImplementedError):
+      app_no_base()
 
-  def heh(self):
-    pass
+  def test_application_has_eventprocessor(self, app_base):
+    assert hasattr(app_base, 'processor') and isinstance(app_base.processor, EventProcessor), 'Application.processor should be an instance of websocket.EventProcessor'
 
+  def test_application_has_eventserver(self, app_base):
+    assert hasattr(app_base, 'server') and isinstance(app_base.server, EventServer), 'Application.server should be an instance of websocket.EventServer'
 
-class BaseView(View):
-  title = "base"
+  def test_application_has_services(self, app_base):
+    assert hasattr(app_base, 'services') and app_base.services == {}, 'Application should set Application.services = {}.'
 
-  def build(self):
-    pass
+  def test_application_has_views(self, app_base):
+    assert hasattr(app_base, 'views') and app_base.views == {}, 'Application should set Application.views = {}.'
 
+  def test_application_has_current_view(self, app_base):
+    assert hasattr(app_base, 'current_view'), 'Application should have Application.current_view.'
 
-class StyleView(View):
-  title = "style"
-  stylesheet = "app.css"
+  def test_application_sets_current_view(self, app_base):
+    assert app_base.current_view is None, 'Application should set Application.current_view = "None".'
 
-  def build(self):
-    self._head.load_stylesheet("yao", StyleView.stylesheet)
+  def test_application_registers_init(self, app_base):
+    assert 'init' in app_base.processor.handlers and len(app_base.processor.handlers.keys()) == 1
 
-
-# VIEW TESTS
-
-def test_app_fails_on_title_undefined():
-  try:
-    AppNoBaseTitle()
-    assert False
-  except Exception as e:
-    assert isinstance(e, NotImplementedError)
-
-  try:
-    AppBaseTitle()
-  except:
-    assert False
-
-
-def test_view_fails_on_title_undefined():
-  try:
-    NoNameView("heh")
-    assert False
-  except Exception as e:
-    assert isinstance(e, NotImplementedError)
-
-
-def test_view_has_document():
-  a = AppBaseTitle()
-  v = BaseView(a)
-
-  assert hasattr(v, "_doc_root")
-  assert isinstance(v._doc_root, Document)
-
-
-def test_view_has_head():
-  a = AppBaseTitle()
-  v = BaseView(a)
-
-  assert hasattr(v, "_head")
-
-
-def test_view_has_body():
-  a = AppBaseTitle()
-  v = BaseView(a)
-
-  assert hasattr(v, "root")
-  assert isinstance(v.root, Body)
-
-
-def test_view_rendering_raises_no_exceptions():
-  try:
-    a = AppBaseTitle()
-    v = BaseView(a)
-    v._render()
-  except Exception:
-    assert False
-
-
-def test_view_rendering_renders_title():
-  a = AppBaseTitle()
-  v = BaseView(a)
-  o_v = v._render()
-  assert '<title id="_page-title">base</title>' in o_v['html']
-
-
-def test_view_rendering_loads_css():
-  a = AppBaseTitle()
-  ov = BaseView(a)
-  v = StyleView(a)
-
-  o_out = ov._render()
-  v_out = v._render()
-
-  assert 'rel="stylesheet"' in v_out['html']
-  assert 'rel="stylesheet"' not in o_out['html']
-
-
-# TODO: test event handling (client events + server events)
+  def test_application_unregister_unregisters(self, app_base):
+    app_base.register('load', 2, 'a')
+    assert 'load' in app_base.processor.handlers and str(id(2)) in app_base.processor.handlers['load'] and app_base.processor.handlers['load'][str(id(2))] == [2], 'Application.register() should register with the EventProcessor.'
+    app_base.unregister('load', 2, 'a')
+    assert app_base.processor.handlers['load'][str(id(2))] == [], 'Application.unregister() should unregister from the EventProcessor.'

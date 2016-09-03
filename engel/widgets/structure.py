@@ -20,7 +20,7 @@ class Document(BaseContainer):
 class Head(BaseContainer):
   html_tag = "head"
 
-  def load_script(self, id, path):
+  def load_script(self, path):
     """
     Proper way to dynamically inject a script in a page.
 

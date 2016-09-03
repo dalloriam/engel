@@ -136,7 +136,7 @@ class View(object):
       for stylesheet in library.stylesheets:
         self._head.load_stylesheet(id(stylesheet), stylesheet)
       for script in library.scripts:
-        self._head.load_script(id(script), script)
+        self._head.load_script(script)
 
     if self.stylesheet is not None:
       self._head.load_stylesheet('main-stylesheet', self.stylesheet)
