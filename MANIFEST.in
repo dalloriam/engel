@@ -1,3 +1,2 @@
 recursive-include engel/ *
 recursive-include eng/ *
-recursive-include tests/ *
