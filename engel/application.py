@@ -46,13 +46,7 @@ class Application(object):
     self.views = {}
     self.current_view = None
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--standalone', help='Only start the websocket server (no browser).', action='store_true')
-    args = parser.parse_args()
-    if args.standalone:
-      self.in_browser = False
-    else:
-      self.in_browser = True
+    self.in_browser = True
 
     self.register('init', lambda evt, interface: self._load_view('default'))
 
@@ -65,6 +59,12 @@ class Application(object):
     # TODO: Support params for services by mapping {servicename: {class, params}}?
     for service in self.services.keys():
       self.services[service] = self.services[service]()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--standalone', help='Only start the websocket server (no browser).', action='store_true')
+    args = parser.parse_args()
+    if args.standalone:
+      self.in_browser = False
 
     self.server.start(self.in_browser, on_exit_callback)
 
