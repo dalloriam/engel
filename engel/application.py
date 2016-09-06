@@ -46,8 +46,6 @@ class Application(object):
     self.views = {}
     self.current_view = None
 
-    self.in_browser = True
-
     self.register('init', lambda evt, interface: self._load_view('default'))
 
   def start(self, on_exit_callback=None):
@@ -63,10 +61,11 @@ class Application(object):
     parser = argparse.ArgumentParser()
     parser.add_argument('--standalone', help='Only start the websocket server (no browser).', action='store_true')
     args = parser.parse_args()
+    in_browser = True
     if args.standalone:
-      self.in_browser = False
+      in_browser = False
 
-    self.server.start(self.in_browser, on_exit_callback)
+    self.server.start(in_browser, on_exit_callback)
 
   def register(self, event, callback, selector=None):
     """
