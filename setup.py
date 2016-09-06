@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-import re, os
+import re
 
 
 version = ''
@@ -35,6 +35,7 @@ setup(name='engel',
       install_requires=[
         "autobahn==0.13.0",
         "requests==2.10.0",
-        "asyncio==3.4.3"
+        "asyncio==3.4.3",
+        "pyinstaller==3.2"
       ]
 )

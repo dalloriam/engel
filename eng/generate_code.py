@@ -57,39 +57,33 @@ def build(target, templates):
   author = input("Author: ")
   subprocess.call(['pyinstaller', '--onefile', target])
 
-  dirpath = 'build/' + app_name if not os.path.isdir('build/' + app_name) else 'build/' + app_name + '_2'
+  build_path = os.path.join('build', app_name) if not os.path.isdir(os.path.join('build', app_name)) else os.path.join('build', app_name + '_2')
   distpath = os.path.abspath(os.path.join(os.getcwd(), 'dist'))
 
-  os.mkdir(dirpath)
-  shutil.move('dist/' + target.replace('.py', ''), dirpath + '/engelapp')
-  os.chdir(dirpath)
+  os.mkdir(build_path)
+  shutil.move(os.path.join(distpath, target.replace('.py', '')), os.path.join(build_path, 'engelapp'))
+  os.chdir(build_path)
 
-  package = read_file(templates + '/package.template').format(app_name, author)
-  index = read_file(templates + '/index.template')
+  package = read_file(os.path.join(templates, 'package.template')).format(app_name, author)
 
   path = os.path.dirname(os.path.realpath(__file__))
   path = os.path.join(os.path.abspath(os.path.join(path, os.pardir)), 'engel')
 
+  index_js = os.path.join(templates, 'index.template')
+  shutil.copy(index_js, 'index.js')
+
   html_file = os.path.join(path, 'index.html')
+  shutil.copy(html_file, 'index.html')
+
   js_file = os.path.join(path, 'engeljs.js')
-  html = read_file(html_file)
-  js = read_file(js_file)
-
-  with open('index.html', 'a') as outfile:
-    outfile.write(html)
-
-  with open('engeljs.js', 'a') as outfile:
-    outfile.write(js)
+  shutil.copy(js_file, 'engeljs.js')
 
   with open('package.json', 'a') as outfile:
     outfile.write(package)
 
-  with open('index.js', 'a') as outfile:
-    outfile.write(index)
-
   subprocess.call(['npm', 'install'])
   subprocess.call(['npm', 'install', 'electron-packager'])
-  subprocess.call(['node', 'node_modules/electron-packager/cli.js', '.', app_name], env={'PATH': os.getenv('PATH')})
+  subprocess.call(['node', os.path.join('node_modules', 'electron-packager', 'cli.js'), '.', app_name], env={'PATH': os.getenv('PATH')})
 
   for file in os.listdir('.'):
     if os.path.isdir(file) and file.startswith(app_name + '-'):
