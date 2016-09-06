@@ -93,7 +93,6 @@ class EventProtocol(WebSocketServerProtocol):
 
   def onClose(self, wasClean, code, reason):
     logging.info("WebSocket connection closed: {}".format(reason))
-    sys.exit(0)
 
 
 class EventServer(object):
@@ -114,12 +113,13 @@ class EventServer(object):
     self.loop = asyncio.get_event_loop()
     self.server = self.loop.create_server(factory, '0.0.0.0', port)
 
-  def start(self, callback=None):
+  def start(self, start_browser, callback=None):
     self.loop.run_until_complete(self.server)
 
     try:
-      path = os.path.dirname(os.path.realpath(__file__))
-      webbrowser.open('file:///' + os.path.join(path, 'index.html'))
+      if start_browser:
+        path = os.path.dirname(os.path.realpath(__file__))
+        webbrowser.open('file:///' + os.path.join(path, 'index.html'))
       self.loop.run_forever()
 
     except KeyboardInterrupt:

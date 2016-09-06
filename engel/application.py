@@ -25,11 +25,12 @@ class Application(object):
 
   # TODO: Add favicon
 
-  def __init__(self, debug=False):
+  def __init__(self, debug=False, in_browser=True):
     """
     Constructor of the Application.
 
     :param debug: Sets the logging level of the application
+    :param in_browser: Should the application start in the default browser?
     :raises NotImplementedError: When ``Application.base_title`` not set in the class definition.
     """
     loglevel = logging.DEBUG if debug else logging.WARNING
@@ -45,6 +46,8 @@ class Application(object):
     self.views = {}
     self.current_view = None
 
+    self.in_browser = in_browser
+
     self.register('init', lambda evt, interface: self._load_view('default'))
 
   def start(self, on_exit_callback=None):
@@ -57,7 +60,7 @@ class Application(object):
     for service in self.services.keys():
       self.services[service] = self.services[service]()
 
-    self.server.start(on_exit_callback)
+    self.server.start(self.in_browser, on_exit_callback)
 
   def register(self, event, callback, selector=None):
     """
