@@ -31,7 +31,6 @@ class Application(object):
     Constructor of the Application.
 
     :param debug: Sets the logging level of the application
-    :param in_browser: Should the application start in the default browser?
     :raises NotImplementedError: When ``Application.base_title`` not set in the class definition.
     """
     loglevel = logging.DEBUG if debug else logging.WARNING
