@@ -3,6 +3,7 @@ Contains all the classes and functions related to the structure of an Engel appl
 """
 import logging
 import asyncio
+import argparse
 
 from .websocket import EventProcessor, EventServer
 
@@ -25,7 +26,7 @@ class Application(object):
 
   # TODO: Add favicon
 
-  def __init__(self, debug=False, in_browser=True):
+  def __init__(self, debug=False):
     """
     Constructor of the Application.
 
@@ -46,7 +47,13 @@ class Application(object):
     self.views = {}
     self.current_view = None
 
-    self.in_browser = in_browser
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--standalone', help='Only start the websocket server (no browser).', action='store_true')
+    args = parser.parse_args()
+    if args.standalone:
+      self.in_browser = False
+    else:
+      self.in_browser = True
 
     self.register('init', lambda evt, interface: self._load_view('default'))
 

@@ -7,7 +7,7 @@ var subpy = null;
 
 app.on('ready', function() {
   // Start engel process
-  var subpy = require('child_process').spawn(__dirname + '/engelapp', []);
+  var subpy = require('child_process').spawn(__dirname + '/engelapp', ['--standalone']);
   var rq = require('request-promise');
 
   var openWindow = function(){
