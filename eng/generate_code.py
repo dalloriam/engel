@@ -69,6 +69,8 @@ def build(target, templates):
   else:
     shutil.move(os.path.join(distpath, target.replace('.py', '')), os.path.join(build_path, 'engelapp'))
 
+  shutil.copytree('public', os.path.join(build_path, 'public'))
+
   os.chdir(build_path)
 
   package = read_file(os.path.join(templates, 'package.template')).format(app_name, author)
