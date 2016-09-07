@@ -1,18 +1,19 @@
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+const path = require('path');
 
 var mainWindow = null;
 var subpy = null;
 
 app.on('ready', function() {
   // Start engel process
-  var subpy = require('child_process').spawn(__dirname + '/engelapp', ['--standalone']);
+  var subpy = require('child_process').spawn(path.join(__dirname, 'engelapp'), ['--standalone']);
   var rq = require('request-promise');
 
   var openWindow = function(){
     mainWindow = new BrowserWindow({width: 800, height: 600});
-    mainWindow.loadURL('file://' + __dirname + '/index.html');
+    mainWindow.loadURL('file://' + path.join(__dirname, 'index.html'));
 
     mainWindow.on('closed', function() {
       mainWindow = null;

@@ -61,7 +61,11 @@ def build(target, templates):
   distpath = os.path.abspath(os.path.join(os.getcwd(), 'dist'))
 
   os.mkdir(build_path)
-  shutil.move(os.path.join(distpath, target.replace('.py', '')), os.path.join(build_path, 'engelapp'))
+  if os.path.isfile(os.path.join(distpath, target.replace('.py', ''))):
+    shutil.move(os.path.join(distpath, target.replace('.py', '')), os.path.join(build_path, 'engelapp'))
+  else:
+    # On windows
+    shutil.move(os.path.join(distpath, target.replace('.py', '.exe')), os.path.join(build_path, 'engelapp'))
   os.chdir(build_path)
 
   package = read_file(os.path.join(templates, 'package.template')).format(app_name, author)
@@ -81,8 +85,8 @@ def build(target, templates):
   with open('package.json', 'a') as outfile:
     outfile.write(package)
 
-  subprocess.call(['npm', 'install'])
-  subprocess.call(['npm', 'install', 'electron-packager'])
+  subprocess.call(['npm', 'install'], shell=True)
+  subprocess.call(['npm', 'install', 'electron-packager'], shell=True)
   subprocess.call(['node', os.path.join('node_modules', 'electron-packager', 'cli.js'), '.', app_name], env={'PATH': os.getenv('PATH')})
 
   for file in os.listdir('.'):
