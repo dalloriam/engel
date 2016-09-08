@@ -65,9 +65,9 @@ def build(target, templates):
 
   os.mkdir(build_path)
   if IS_WINDOWS:
-    shutil.move(os.path.join(distpath, target.replace('.py', '.exe')), os.path.join(build_path, 'engelapp.exe'))
+    shutil.move(os.path.join(distpath, target.replace('.py', '.exe')), os.path.join(build_path, app_name + '.exe'))
   else:
-    shutil.move(os.path.join(distpath, target.replace('.py', '')), os.path.join(build_path, 'engelapp'))
+    shutil.move(os.path.join(distpath, target.replace('.py', '')), os.path.join(build_path, app_name))
 
   shutil.copytree('public', os.path.join(build_path, 'public'))
 
@@ -79,7 +79,9 @@ def build(target, templates):
   path = os.path.join(os.path.abspath(os.path.join(path, os.pardir)), 'engel')
 
   index_js = os.path.join(templates, 'index.template')
-  shutil.copy(index_js, 'index.js')
+  index = read_file(index_js).format(app_name)
+  with open('index.js', 'a') as outfile:
+    outfile.write(index)
 
   html_file = os.path.join(path, 'index.html')
   shutil.copy(html_file, 'index.html')

@@ -5,33 +5,39 @@ const path = require('path');
 
 var mainWindow = null;
 var subpy = null;
+var isWin = /^win/.test(process.platform);
 
-app.on('ready', function() {
+app.on('ready', function() {{
   // Start engel process
-  var subpy = require('child_process').spawn(path.join(__dirname, 'engelapp'), ['--standalone']);
+  var process = require('child_process');
+  var subpy = process.spawn(path.join(__dirname, '{0}'), ['--standalone']);
   var rq = require('request-promise');
 
-  var openWindow = function(){
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+  var openWindow = function(){{
+    mainWindow = new BrowserWindow({{width: 800, height: 600}});
     mainWindow.loadURL('file://' + path.join(__dirname, 'index.html'));
 
-    mainWindow.on('closed', function() {
+    mainWindow.on('closed', function() {{
       mainWindow = null;
-      subpy.kill('SIGINT');
-      subpy.on('close', function() {
+      if (isWin) {{
+        process.exec('taskkill /F /IM {0}.exe');
+      }} else {{
+        subpy.kill('SIGINT');
+      }}
+      subpy.on('close', function() {{
         app.quit();
-      });
-    });
-  };
+      }});
+    }});
+  }};
 
-  var startUp = function() {
+  var startUp = function() {{
     rq('http://127.0.0.1:8080')
-      .then(function(htmlString){
+      .then(function(htmlString){{
         openWindow();
-      })
-      .catch(function(err){
+      }})
+      .catch(function(err){{
         startUp();
-      });
-  }
+      }});
+  }}
   startUp();
-});
+}});
