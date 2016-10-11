@@ -4,7 +4,7 @@ from tests.utils import DispatchInterceptorView
 
 sys.path.append('../engel')
 
-from engel.widgets.structure import Document, Head, Body, Panel, List
+from engel.widgets.structure import Document, Head, Body, Panel, List, _li
 from engel.widgets.abstract import HeadLink
 
 
@@ -73,4 +73,50 @@ class TestListStructure():
   def test_widget_structure_list_html_tag(self, lst):
     assert lst.html_tag == "ul"
 
-# No list behavior tests for now b/c list overhaul is coming. TODO:
+class TestListBehavior():
+
+  @pytest.fixture()
+  def lst(self):
+    return List(id='id')
+
+  def test_widget_structure_list_has_no_children_by_default(self, lst):
+    assert len(lst.children) == 0
+
+  def test_widget_structure_list_add_child_works(self, lst):
+    elem = Panel(id="testpanel")
+    lst.add_child(elem)
+    assert len(lst.children) == 1
+  
+  def test_widget_structure_list_remove_child_works(self, lst):
+    elem = Panel(id="testpanel")
+    lst.add_child(elem)
+
+    lst.remove_child(elem)
+    assert len(lst.children) == 0
+
+  def test_widget_structure_list_add_child_wraps_element(self, lst):
+    elem = Panel(id="testpanel")
+    lst.add_child(elem)
+    assert isinstance(lst.children[0], _li) and lst.children[0].children[0] is elem
+
+  def test_widget_structure_list_iterator_works(self, lst):
+    elem = Panel(id="testpanel")
+    lst.add_child(elem)
+
+    children = [x for x in lst]
+
+    assert children == [elem]
+  
+  def test_widget_structure_list_getter_works(self, lst):
+    elem = Panel(id="testpanel")
+    lst.add_child(elem)
+
+    assert lst[0] is elem
+
+  def test_widget_structure_list_setter_works(self, lst):
+    elem = Panel(id="testpanel")
+    lst.add_child(elem)
+    elem2 = Panel(id="otherpanel")
+    lst[0] = elem2
+    assert lst[0] is elem2 and lst.children[0].children[0] is elem2
+    
