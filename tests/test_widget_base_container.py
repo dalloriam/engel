@@ -129,3 +129,14 @@ def test_widget_base_container_compile_compiles_children():
   b_elem_2.html_tag = 'c'
 
   assert fake_parent.compile() == '<a id="id"><b id="id1"></b><c id="id2"></c></a>'
+
+
+def test_widget_base_container_clear_children_removes_all():
+  container = BaseContainer(id='id')
+
+  child_1 = BaseElement(id='id', parent=container)
+  child_2 = BaseElement(id='id2', parent=container)
+
+  assert len(container.children) == 2
+  container.clear_children()
+  assert len(container.children) == 0

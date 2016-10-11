@@ -194,6 +194,13 @@ class BaseContainer(BaseElement):
         'selector': '#' + child.id
       })
 
+  def clear_children(self):
+    """
+    Remove the children of this widget
+    """
+    for child in reversed(self.children):
+      self.remove_child(child)
+
   def replace_child(self, old_child, new_child):
 
     for i, child in enumerate(self.children):
