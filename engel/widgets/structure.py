@@ -67,7 +67,7 @@ class List(BaseContainer):
     self._count = 0
     self._items = []
 
-  def append(self, widget):
+  def add_child(self, widget):
     """
     Append a widget to the list.
 
@@ -76,11 +76,11 @@ class List(BaseContainer):
     li_itm = _li(id=self.id + str(self._count))
     li_itm.add_child(widget)
 
-    self.add_child(li_itm)
+    super(List, self).add_child(li_itm)
     self._items.append((widget, li_itm))
     self._count += 1
 
-  def remove(self, widget):
+  def remove_child(self, widget):
     """
     Remove a widget from the list.
 
@@ -90,7 +90,7 @@ class List(BaseContainer):
     if raw:
       itm, wrapped = raw[0]
       self._items.remove(raw[0])
-      self.remove_child(wrapped)
+      super(List, self).remove_child(wrapped)
     else:
       raise ValueError("Child not in list.")
 
