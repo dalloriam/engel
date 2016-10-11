@@ -41,8 +41,13 @@ class EventProcessor(object):
 
     if selector is None:
       self.handlers[event]['_'].remove(callback)
+      if not self.handlers[event]['_']:
+        self.handlers[event].pop('_')
     else:
       self.handlers[event].pop(str(id(callback)))
+
+    if not self.handlers[event]:
+      self.handlers.pop(event)
 
     if event not in ('init', 'load', 'close'):
       self.dispatch({'name': 'unsubscribe', 'event': event, 'selector': selector, 'key': str(id(callback))})
