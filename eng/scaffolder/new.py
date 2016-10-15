@@ -23,3 +23,5 @@ def new(options):
   create_folder(os.path.join(app_abspath, 'services'))
   write_file(os.path.join(app_abspath, 'services', '__init__.py'), '')
 
+  create_folder(os.path.join(app_abspath, 'public'))
+
