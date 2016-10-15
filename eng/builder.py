@@ -1,2 +1,0 @@
-def build(options):
-  pass
