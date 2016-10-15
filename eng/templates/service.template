@@ -1,4 +1,4 @@
-class {0}(object):
+class {serviceCamelCase}(object):
 
   def __init__(self):
     pass

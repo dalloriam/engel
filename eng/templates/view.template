@@ -1,9 +1,10 @@
 from engel import View
+from engel.widgets import Title
 
 
-class {0}(View):
+class {viewCamelCase}(View):
 
-  title = "{0}"
+  title = "{viewTitle}"
 
   def build(self):
-    pass
+    Title(id='main-title', text="{viewCamelCase} works!", parent=self.root)
