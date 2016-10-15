@@ -29,12 +29,13 @@ setup(name='engel',
       include_package_data=True,
       entry_points={
         'console_scripts': [
-          'eng=eng.generate_code:main'
+          'eng=eng.eng_cli:main'
         ]
       },
       install_requires=[
         "autobahn==0.13.0",
         "requests==2.10.0",
-        "asyncio==3.4.3"
+        "asyncio==3.4.3",
+        "colorama==0.3.7"
       ]
 )
