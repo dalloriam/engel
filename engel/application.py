@@ -167,7 +167,7 @@ class View(object):
         """
         Function used for view switching.
         Use it to get the callback in an event handler declaration.
-        ``self.on('click', self.redirect('myview'), '#' + mybtn.id)`̀
+        ``self.on('click', self.redirect('myview'), '#' + mybtn.id)``
 
         :param view_name: Target view
         :returns: View loader callback
