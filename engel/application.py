@@ -163,6 +163,17 @@ class View(object):
         """
         raise NotImplementedError
 
+    def redirect(self, view_name):
+        """
+        Function used for view switching.
+        Use it to get the callback in an event handler declaration.
+        ``self.on('click', self.redirect('myview'), '#' + mybtn.id)`̀
+
+        :param view_name: Target view
+        :returns: View loader callback
+        """
+        return lambda x, y: self.context._load_view(view_name)
+
     def on(self, event, callback, selector=None):
         """
         Wrapper around :meth:`~.application.Application.register`.
