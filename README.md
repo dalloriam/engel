@@ -111,7 +111,7 @@ class MainFileView(View):
     self.on(event="click", callback=self.create_line, selector="#" + btn.id)
 
   def append_line(self, ln):
-    self.lines_list.append(Span(id="line_" + str(self.current_id), text=ln))
+    self.lines_list.add_child(Span(id="line_" + str(self.current_id), text=ln))
     self.current_id += 1
 
   def create_line(self, event, interface):
