@@ -37,6 +37,7 @@ setup(
         "autobahn==0.13.0",
         "requests==2.10.0",
         "asyncio==3.4.3",
-        "colorama==0.3.7"
+        "colorama==0.3.7",
+        "Jinja2"
     ]
 )

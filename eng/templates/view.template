@@ -2,9 +2,9 @@ from engel import View
 from engel.widgets import Title
 
 
-class {viewCamelCase}(View):
+class {{ viewCamelCase }}(View):
 
-  title = "{viewTitle}"
+    title = "{{ viewTitle }}"
 
-  def build(self):
-    Title(id='main-title', text="{viewCamelCase} works!", parent=self.root)
+    def build(self):
+        Title(id='main-title', text="{{ viewCamelCase }} works!", parent=self.root)
