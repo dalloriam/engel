@@ -1,5 +1,6 @@
 var SOCKET_URL = "ws://127.0.0.1:8080"
 var socket
+var debug
 
 function init() {
     socket = new WebSocket(SOCKET_URL)
@@ -14,11 +15,13 @@ function init() {
     }
 
     socket.onmessage = function(event) {
-        console.log("Received: " + event.data)
+        if (debug)
+            console.log("Received: " + event.data)
 
         command = JSON.parse(event.data)
 
         if (command.name == "init") {
+            debug = command.debug
             if (command.html)
                 d3.select("html").html(command.html)
 
@@ -29,8 +32,13 @@ function init() {
         }
         else if (command.name == "script") {
             $.getScript(command.path, function(data, textStatus, jqxhr) {
-                console.log("Script Loaded.");
+                if (debug)
+                    console.log("Script Loaded.");
             });
+        }
+        else if (command.name == "error") {
+            if (debug)
+                console.log("Server Error: " + command.body)
         }
         else if (command.name == "remove") {
             d3.selectAll(command.selector).remove()

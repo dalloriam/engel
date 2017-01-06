@@ -3,6 +3,7 @@ import sys
 import json
 import logging
 import asyncio
+import traceback
 
 import webbrowser
 
@@ -17,7 +18,7 @@ class EventProcessor(object):
         self.handlers = defaultdict(lambda: defaultdict(lambda: []))
 
     def register(self, event, callback, selector=None):
-        print('Registering: ' + str(event))
+        logging.debug('Registering: ' + str(event))
 
         if selector:
             key = str(id(callback))
@@ -32,7 +33,7 @@ class EventProcessor(object):
                 selector = 'html'
                 capture = True
 
-            print('Dispatching: ' + str(event))
+            logging.debug('Dispatching: ' + str(event))
             self.dispatch({
                 'name': 'subscribe',
                 'event': event,
@@ -68,21 +69,30 @@ class EventProcessor(object):
         event_type = event['event']
 
         if event_type in self.handlers:
-            if 'key' in event:
-                key = event['key']
-                if key in self.handlers[event_type]:
-                    for handler in self.handlers[event_type][key]:
-                        if callable(handler):
-                            command = yield from handler(event, self)
+            try:
+                if 'key' in event:
+                    key = event['key']
+                    if key in self.handlers[event_type]:
+                        for handler in self.handlers[event_type][key]:
+                            if callable(handler):
+                                command = yield from handler(event, self)
 
-                            if command:
-                                self.dispatch(command)
+                                if command:
+                                    self.dispatch(command)
 
-            for handler in self.handlers[event_type]['_']:
-                if callable(handler):
-                    command = yield from handler(event, self)
-                    if command:
-                        self.dispatch(command)
+                for handler in self.handlers[event_type]['_']:
+                    if callable(handler):
+                        command = yield from handler(event, self)
+                        if command:
+                            self.dispatch(command)
+
+            except Exception as e:
+                tb = traceback.format_exc()
+                logging.error(tb)
+                self.dispatch({
+                    'name': 'error',
+                    'body': tb
+                })
 
 
 class EventProtocol(WebSocketServerProtocol):
