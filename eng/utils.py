@@ -1,5 +1,6 @@
 import os
 
+from jinja2 import Template
 from eng.logging import error, success
 
 
@@ -31,23 +32,23 @@ def read_template(template):
     data = None
     with open(template_file, "rU") as infile:
         data = infile.read()
-    return data
+    return Template(data)
 
 
 def render_app(app_name):
-    src = read_template("app")
+    template = read_template("app")
     ccName = app_name.replace('_', ' ').title().replace(' ', '')
-    return src.format(appCamelCase=ccName)
+    return template.render(appCamelCase=ccName)
 
 
 def render_view(view_name):
-    src = read_template("view")
+    template = read_template("view")
     view_title = view_name.replace('_', ' ').title().replace(' ', '')
     view_camel = view_title + 'View'
-    return src.format(viewCamelCase=view_camel, viewTitle=view_title)
+    return template.render(viewCamelCase=view_camel, viewTitle=view_title)
 
 
 def render_service(service_name):
-    src = read_template("service")
+    template = read_template("service")
     svc_camel = service_name.replace('_', ' ').title().replace(' ', '') + 'Service'
-    return src.format(serviceCamelCase=svc_camel)
+    return template.render(serviceCamelCase=svc_camel)

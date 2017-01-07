@@ -3,16 +3,16 @@ from engel import Application
 from views.home import HomeView
 
 
-class {appCamelCase}(Application):
+class {{ appCamelCase }}(Application):
 
-  base_title = "{{0}} | {appCamelCase}"
+    base_title = "{0} | {{ appCamelCase }}"
 
-  def __init__(self, debug=False):
-    super().__init__(debug)
+    def __init__(self, debug=False):
+        super().__init__(debug)
 
-    self.views['default'] = HomeView
+        self.views['default'] = HomeView
 
 
 if __name__ == "__main__":
-  app = {appCamelCase}(debug=False)
-  app.start()
+	app = {{ appCamelCase }}(debug=False)
+	app.start()
