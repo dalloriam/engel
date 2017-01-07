@@ -14,5 +14,5 @@ class {{ appCamelCase }}(Application):
 
 
 if __name__ == "__main__":
-	app = {{ appCamelCase }}(debug=False)
-	app.start()
+    app = {{ appCamelCase }}(debug=False)
+    app.start()
