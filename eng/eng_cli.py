@@ -10,19 +10,19 @@ valid_actions = {'generate': generate, 'new': new}
 
 
 def cli(options):
-  if not options:
+    if not options:
+        error(invalid)
+        return
+
+    action = options[0]
+
+    for k in valid_actions:
+        if action == k or action == k[0]:
+            valid_actions[k](options[1:])
+            return
     error(invalid)
-    return
 
-  action = options[0]
-
-  for k in valid_actions:
-    if action == k or action == k[0]:
-      valid_actions[k](options[1:])
-      return
-  error(invalid)
 
 def main():
-  cli(sys.argv[1:])
-  info("Done.")
-
+    cli(sys.argv[1:])
+    info("Done.")
