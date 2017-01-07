@@ -13,3 +13,5 @@ dist/*
 *.egg-info
 .eggs/*
 docs/_build/*
+.vs/*
+*.pyproj
