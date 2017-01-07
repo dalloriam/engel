@@ -38,6 +38,7 @@ class Application(object):
         :raises NotImplementedError: When ``Application.base_title``
         not set in the class definition.
         """
+        self.debug = debug
         loglevel = logging.DEBUG if debug else logging.WARNING
         logging.basicConfig(
             format='%(asctime)s - [%(levelname)s] %(message)s', datefmt='%I:%M:%S %p', level=loglevel)
@@ -100,8 +101,10 @@ class Application(object):
     def _load_view(self, view_name):
         if view_name not in self.views:
             raise NotImplementedError
+
         if self.current_view is not None:
             self.current_view.unload()
+
         self.current_view = self.views[view_name](self)
         return self.current_view._render()
 
@@ -209,4 +212,4 @@ class View(object):
         PageTitle(id="_page-title",
                   text=self.context.base_title.format(self.title), parent=self._head)
         self.build()
-        return {'name': 'init', 'html': self._doc_root.compile()}
+        return {'name': 'init', 'html': self._doc_root.compile(), 'debug': self.context.debug}
