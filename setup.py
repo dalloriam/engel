@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-import re, os
+import re
 
 
 version = ''
@@ -14,27 +14,30 @@ readme = ''
 with open('README.md') as f:
     readme = f.read()
 
-setup(name='engel',
-      author='Dalloriam',
-      author_email='dalloriam@gmail.com',
-      url='https://github.com/Dalloriam/engel',
-      version=version,
-      packages=find_packages(),
-      license='MIT',
-      description='Build rock-solid web interfaces for your projects.',
-      setup_requires=['pytest-runner'],
-      tests_require=['pytest'],
-      long_description=readme,
-      package_data={'engel': ['index.html', 'engeljs.js'], 'eng': ['templates/*']},
-      include_package_data=True,
-      entry_points={
+setup(
+    name='engel',
+    author='Dalloriam',
+    author_email='dalloriam@gmail.com',
+    url='https://github.com/Dalloriam/engel',
+    version=version,
+    packages=find_packages(),
+    license='MIT',
+    description='Build rock-solid web interfaces for your projects.',
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
+    long_description=readme,
+    package_data={'engel': ['index.html', 'engeljs.js'], 'eng': ['templates/*']},
+    include_package_data=True,
+    entry_points={
         'console_scripts': [
-          'eng=eng.generate_code:main'
+            'eng=eng.eng_cli:main'
         ]
-      },
-      install_requires=[
+    },
+    install_requires=[
         "autobahn==0.13.0",
         "requests==2.10.0",
-        "asyncio==3.4.3"
-      ]
+        "asyncio==3.4.3",
+        "colorama==0.3.7",
+        "Jinja2"
+    ]
 )
