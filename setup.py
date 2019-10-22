@@ -33,7 +33,7 @@ setup(
     },
     install_requires=[
         "autobahn==0.13.0",
-        "requests==2.10.0",
+        "requests==2.20.0",
         "asyncio==3.4.3",
         "colorama==0.3.7",
         "Jinja2"
