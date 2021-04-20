@@ -32,7 +32,7 @@ setup(
         ]
     },
     install_requires=[
-        "autobahn==0.13.0",
+        "autobahn==20.12.3",
         "requests==2.10.0",
         "asyncio==3.4.3",
         "colorama==0.3.7",
